@@ -7,7 +7,6 @@ import numpy as np
 
 from PIL import Image
 from sklearn.ensemble import RandomForestClassifier
-from deep_translator import GoogleTranslator
 
 
 # =========================================================
@@ -40,127 +39,665 @@ lang_codes = {
 
 labels = {
 
+    # =====================================================
+    # ENGLISH
+    # =====================================================
+
     "English": {
+
         "title": "Krishived",
-        "upload": "📎 Upload KVK / Soil Health Card",
-        "upload_help": "Upload a clear image of your Soil Health Card",
-        "extracted": "📄 Information extracted from your report",
-        "nitrogen": "Nitrogen (N)",
-        "phosphorus": "Phosphorus (P)",
-        "potassium": "Potassium (K)",
-        "ph": "pH",
-        "temperature": "Temperature (°C)",
-        "humidity": "Humidity (%)",
-        "rainfall": "Rainfall (mm)",
-        "manual": "🌱 Enter other information",
-        "button": "Recommend Crops",
-        "crop_title": "🌾 Top Crops to Grow",
-        "not_detected": "Not detected",
-        "uploaded": "Uploaded Soil Health Card",
-        "probability": "Model probability",
-        "no_crop": "No crop has a probability of at least 10% for these conditions."
+
+        "choose_language": "🌐 Choose Language",
+
+        "upload":
+            "📎 Upload KVK (Krishi Vigyan Kendra) / Soil Health Card",
+
+        "upload_help":
+            "Upload a clear image of your Soil Health Card",
+
+        "reading":
+            "Reading Soil Health Card...",
+
+        "extracted":
+            "📄 Information extracted from your report",
+
+        "nitrogen":
+            "Nitrogen (N)",
+
+        "phosphorus":
+            "Phosphorus (P)",
+
+        "potassium":
+            "Potassium (K)",
+
+        "ph":
+            "pH",
+
+        "p2o5":
+            "Phosphorus (P₂O₅)",
+
+        "k2o":
+            "Potassium (K₂O)",
+
+        "temperature":
+            "Temperature (°C)",
+
+        "humidity":
+            "Humidity (%)",
+
+        "rainfall":
+            "Rainfall (mm)",
+
+        "manual":
+            "🌱 Enter other information",
+
+        "soil_information":
+            "🌱 Soil Information",
+
+        "button":
+            "Recommend Crops",
+
+        "crop_title":
+            "🌾 Top Crops to Grow",
+
+        "not_detected":
+            "Not detected",
+
+        "uploaded":
+            "Uploaded Soil Health Card",
+
+        "probability":
+            "Model probability",
+
+        "no_crop":
+            "No crop has a probability of at least 10% for these conditions.",
+
+        "dataset_error":
+            "Crop_recommendation.csv was not found. Please put it in the same folder as crop_chatbot.py.",
+
+        "missing_columns":
+            "Crop dataset is missing columns:",
+
+        "nitrogen_extracted":
+            "Nitrogen (N)",
+
+        "phosphorus_extracted":
+            "Phosphorus (P₂O₅)",
+
+        "potassium_extracted":
+            "Potassium (K₂O)"
     },
+
+
+    # =====================================================
+    # HINDI
+    # =====================================================
 
     "Hindi": {
-        "title": "कृषिवेद",
-        "upload": "📎 KVK / मृदा स्वास्थ्य कार्ड अपलोड करें",
-        "upload_help": "अपने मृदा स्वास्थ्य कार्ड की स्पष्ट तस्वीर अपलोड करें",
-        "extracted": "📄 आपकी रिपोर्ट से प्राप्त जानकारी",
-        "nitrogen": "नाइट्रोजन (N)",
-        "phosphorus": "फॉस्फोरस (P)",
-        "potassium": "पोटैशियम (K)",
-        "ph": "pH",
-        "temperature": "तापमान (°C)",
-        "humidity": "आर्द्रता (%)",
-        "rainfall": "वर्षा (mm)",
-        "manual": "🌱 अन्य जानकारी दर्ज करें",
-        "button": "फसल सुझाएं",
-        "crop_title": "🌾 उगाने के लिए शीर्ष फसलें",
-        "not_detected": "पता नहीं चला",
-        "uploaded": "अपलोड किया गया मृदा स्वास्थ्य कार्ड",
-        "probability": "मॉडल संभावना",
-        "no_crop": "इन परिस्थितियों के लिए किसी भी फसल की संभावना कम से कम 10% नहीं है।"
+
+        "title":
+            "कृषिवेद",
+
+        "choose_language":
+            "🌐 भाषा चुनें",
+
+        "upload":
+            "📎 KVK (कृषि विज्ञान केंद्र) / मृदा स्वास्थ्य कार्ड अपलोड करें",
+
+        "upload_help":
+            "अपने मृदा स्वास्थ्य कार्ड की स्पष्ट तस्वीर अपलोड करें",
+
+        "reading":
+            "मृदा स्वास्थ्य कार्ड पढ़ा जा रहा है...",
+
+        "extracted":
+            "📄 आपकी रिपोर्ट से प्राप्त जानकारी",
+
+        "nitrogen":
+            "नाइट्रोजन (N)",
+
+        "phosphorus":
+            "फॉस्फोरस (P)",
+
+        "potassium":
+            "पोटैशियम (K)",
+
+        "ph":
+            "pH",
+
+        "p2o5":
+            "फॉस्फोरस (P₂O₅)",
+
+        "k2o":
+            "पोटैशियम (K₂O)",
+
+        "temperature":
+            "तापमान (°C)",
+
+        "humidity":
+            "आर्द्रता (%)",
+
+        "rainfall":
+            "वर्षा (mm)",
+
+        "manual":
+            "🌱 अन्य जानकारी दर्ज करें",
+
+        "soil_information":
+            "🌱 मिट्टी की जानकारी",
+
+        "button":
+            "फसल सुझाएं",
+
+        "crop_title":
+            "🌾 उगाने के लिए शीर्ष फसलें",
+
+        "not_detected":
+            "पता नहीं चला",
+
+        "uploaded":
+            "अपलोड किया गया मृदा स्वास्थ्य कार्ड",
+
+        "probability":
+            "मॉडल संभावना",
+
+        "no_crop":
+            "इन परिस्थितियों के लिए किसी भी फसल की संभावना कम से कम 10% नहीं है।",
+
+        "dataset_error":
+            "Crop_recommendation.csv नहीं मिली। कृपया इसे crop_chatbot.py के साथ उसी फ़ोल्डर में रखें।",
+
+        "missing_columns":
+            "क्रॉप डेटासेट में निम्न कॉलम नहीं हैं:",
+
+        "nitrogen_extracted":
+            "नाइट्रोजन (N)",
+
+        "phosphorus_extracted":
+            "फॉस्फोरस (P₂O₅)",
+
+        "potassium_extracted":
+            "पोटैशियम (K₂O)"
     },
+
+
+    # =====================================================
+    # KANNADA
+    # =====================================================
 
     "Kannada": {
-        "title": "ಕೃಷಿವೇದ",
-        "upload": "📎 KVK / ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ",
-        "upload_help": "ನಿಮ್ಮ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್‌ನ ಸ್ಪಷ್ಟ ಚಿತ್ರವನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",
-        "extracted": "📄 ನಿಮ್ಮ ವರದಿಯಿಂದ ಪಡೆದ ಮಾಹಿತಿ",
-        "nitrogen": "ನೈಟ್ರಜನ (N)",
-        "phosphorus": "ಫಾಸ್ಫರಸ್ (P)",
-        "potassium": "ಪೊಟ್ಯಾಸಿಯಮ್ (K)",
-        "ph": "pH",
-        "temperature": "ತಾಪಮಾನ (°C)",
-        "humidity": "ಆರ್ದ್ರತೆ (%)",
-        "rainfall": "ಮಳೆ (mm)",
-        "manual": "🌱 ಇತರ ಮಾಹಿತಿಯನ್ನು ನಮೂದಿಸಿ",
-        "button": "ಬೆಳೆಗಳನ್ನು ಸೂಚಿಸಿ",
-        "crop_title": "🌾 ಬೆಳೆಯಲು ಸೂಕ್ತವಾದ ಪ್ರಮುಖ ಬೆಳೆಗಳು",
-        "not_detected": "ಪತ್ತೆಯಾಗಿಲ್ಲ",
-        "uploaded": "ಅಪ್ಲೋಡ್ ಮಾಡಿದ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್",
-        "probability": "ಮಾದರಿ ಸಂಭವನೀಯತೆ",
-        "no_crop": "ಈ ಪರಿಸ್ಥಿತಿಗಳಿಗೆ ಕನಿಷ್ಠ 10% ಸಂಭವನೀಯತೆಯ ಬೆಳೆ ಇಲ್ಲ."
+
+        "title":
+            "ಕೃಷಿವೇದ",
+
+        "choose_language":
+            "🌐 ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+
+        "upload":
+            "📎 KVK (ಕೃಷಿ ವಿಜ್ಞಾನ ಕೇಂದ್ರ) / ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+
+        "upload_help":
+            "ನಿಮ್ಮ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್‌ನ ಸ್ಪಷ್ಟ ಚಿತ್ರವನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+
+        "reading":
+            "ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಓದಲಾಗುತ್ತಿದೆ...",
+
+        "extracted":
+            "📄 ನಿಮ್ಮ ವರದಿಯಿಂದ ಪಡೆದ ಮಾಹಿತಿ",
+
+        "nitrogen":
+            "ನೈಟ್ರಜನ (N)",
+
+        "phosphorus":
+            "ಫಾಸ್ಫರಸ್ (P)",
+
+        "potassium":
+            "ಪೊಟ್ಯಾಸಿಯಮ್ (K)",
+
+        "ph":
+            "pH",
+
+        "p2o5":
+            "ಫಾಸ್ಫರಸ್ (P₂O₅)",
+
+        "k2o":
+            "ಪೊಟ್ಯಾಸಿಯಮ್ (K₂O)",
+
+        "temperature":
+            "ತಾಪಮಾನ (°C)",
+
+        "humidity":
+            "ಆರ್ದ್ರತೆ (%)",
+
+        "rainfall":
+            "ಮಳೆ (mm)",
+
+        "manual":
+            "🌱 ಇತರ ಮಾಹಿತಿಯನ್ನು ನಮೂದಿಸಿ",
+
+        "soil_information":
+            "🌱 ಮಣ್ಣಿನ ಮಾಹಿತಿ",
+
+        "button":
+            "ಬೆಳೆಗಳನ್ನು ಸೂಚಿಸಿ",
+
+        "crop_title":
+            "🌾 ಬೆಳೆಯಲು ಸೂಕ್ತವಾದ ಪ್ರಮುಖ ಬೆಳೆಗಳು",
+
+        "not_detected":
+            "ಪತ್ತೆಯಾಗಿಲ್ಲ",
+
+        "uploaded":
+            "ಅಪ್ಲೋಡ್ ಮಾಡಿದ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್",
+
+        "probability":
+            "ಮಾದರಿ ಸಂಭವನೀಯತೆ",
+
+        "no_crop":
+            "ಈ ಪರಿಸ್ಥಿತಿಗಳಿಗೆ ಕನಿಷ್ಠ 10% ಸಂಭವನೀಯತೆಯ ಬೆಳೆ ಇಲ್ಲ.",
+
+        "dataset_error":
+            "Crop_recommendation.csv ಕಂಡುಬಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ಅದನ್ನು crop_chatbot.py ಇರುವ ಅದೇ ಫೋಲ್ಡರ್‌ನಲ್ಲಿ ಇರಿಸಿ.",
+
+        "missing_columns":
+            "ಕ್ರಾಪ್ ಡೇಟಾಸೆಟ್‌ನಲ್ಲಿ ಈ ಕಾಲಮ್‌ಗಳು ಕಾಣೆಯಾಗಿವೆ:",
+
+        "nitrogen_extracted":
+            "ನೈಟ್ರಜನ (N)",
+
+        "phosphorus_extracted":
+            "ಫಾಸ್ಫರಸ್ (P₂O₅)",
+
+        "potassium_extracted":
+            "ಪೊಟ್ಯಾಸಿಯಮ್ (K₂O)"
     },
+
+
+    # =====================================================
+    # PUNJABI
+    # =====================================================
 
     "Punjabi": {
-        "title": "ਕ੍ਰਿਸ਼ਿਵੇਦ",
-        "upload": "📎 KVK / ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ ਅਪਲੋਡ ਕਰੋ",
-        "upload_help": "ਆਪਣੇ ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ ਦੀ ਸਾਫ਼ ਤਸਵੀਰ ਅਪਲੋਡ ਕਰੋ",
-        "extracted": "📄 ਤੁਹਾਡੀ ਰਿਪੋਰਟ ਤੋਂ ਪ੍ਰਾਪਤ ਜਾਣਕਾਰੀ",
-        "nitrogen": "ਨਾਈਟ੍ਰੋਜਨ (N)",
-        "phosphorus": "ਫਾਸਫੋਰਸ (P)",
-        "potassium": "ਪੋਟਾਸ਼ੀਅਮ (K)",
-        "ph": "pH",
-        "temperature": "ਤਾਪਮਾਨ (°C)",
-        "humidity": "ਨਮੀ (%)",
-        "rainfall": "ਵਰਖਾ (mm)",
-        "manual": "🌱 ਹੋਰ ਜਾਣਕਾਰੀ ਦਰਜ ਕਰੋ",
-        "button": "ਫਸਲਾਂ ਦੀ ਸਿਫਾਰਸ਼ ਕਰੋ",
-        "crop_title": "🌾 ਉਗਾਉਣ ਲਈ ਮੁੱਖ ਫਸਲਾਂ",
-        "not_detected": "ਪਤਾ ਨਹੀਂ ਲੱਗਿਆ",
-        "uploaded": "ਅਪਲੋਡ ਕੀਤਾ ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ",
-        "probability": "ਮਾਡਲ ਸੰਭਾਵਨਾ",
-        "no_crop": "ਇਨ੍ਹਾਂ ਹਾਲਾਤਾਂ ਲਈ ਕਿਸੇ ਵੀ ਫਸਲ ਦੀ ਸੰਭਾਵਨਾ ਘੱਟੋ-ਘੱਟ 10% ਨਹੀਂ ਹੈ।"
+
+        "title":
+            "ਕ੍ਰਿਸ਼ਿਵੇਦ",
+
+        "choose_language":
+            "🌐 ਭਾਸ਼ਾ ਚੁਣੋ",
+
+        "upload":
+            "📎 KVK (ਕ੍ਰਿਸ਼ੀ ਵਿਗਿਆਨ ਕੇਂਦਰ) / ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ ਅਪਲੋਡ ਕਰੋ",
+
+        "upload_help":
+            "ਆਪਣੇ ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ ਦੀ ਸਾਫ਼ ਤਸਵੀਰ ਅਪਲੋਡ ਕਰੋ",
+
+        "reading":
+            "ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ ਪੜ੍ਹਿਆ ਜਾ ਰਿਹਾ ਹੈ...",
+
+        "extracted":
+            "📄 ਤੁਹਾਡੀ ਰਿਪੋਰਟ ਤੋਂ ਪ੍ਰਾਪਤ ਜਾਣਕਾਰੀ",
+
+        "nitrogen":
+            "ਨਾਈਟ੍ਰੋਜਨ (N)",
+
+        "phosphorus":
+            "ਫਾਸਫੋਰਸ (P)",
+
+        "potassium":
+            "ਪੋਟਾਸ਼ੀਅਮ (K)",
+
+        "ph":
+            "pH",
+
+        "p2o5":
+            "ਫਾਸਫੋਰਸ (P₂O₅)",
+
+        "k2o":
+            "ਪੋਟਾਸ਼ੀਅਮ (K₂O)",
+
+        "temperature":
+            "ਤਾਪਮਾਨ (°C)",
+
+        "humidity":
+            "ਨਮੀ (%)",
+
+        "rainfall":
+            "ਵਰਖਾ (mm)",
+
+        "manual":
+            "🌱 ਹੋਰ ਜਾਣਕਾਰੀ ਦਰਜ ਕਰੋ",
+
+        "soil_information":
+            "🌱 ਮਿੱਟੀ ਦੀ ਜਾਣਕਾਰੀ",
+
+        "button":
+            "ਫਸਲਾਂ ਦੀ ਸਿਫਾਰਸ਼ ਕਰੋ",
+
+        "crop_title":
+            "🌾 ਉਗਾਉਣ ਲਈ ਮੁੱਖ ਫਸਲਾਂ",
+
+        "not_detected":
+            "ਪਤਾ ਨਹੀਂ ਲੱਗਿਆ",
+
+        "uploaded":
+            "ਅਪਲੋਡ ਕੀਤਾ ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ",
+
+        "probability":
+            "ਮਾਡਲ ਸੰਭਾਵਨਾ",
+
+        "no_crop":
+            "ਇਨ੍ਹਾਂ ਹਾਲਾਤਾਂ ਲਈ ਕਿਸੇ ਵੀ ਫਸਲ ਦੀ ਸੰਭਾਵਨਾ ਘੱਟੋ-ਘੱਟ 10% ਨਹੀਂ ਹੈ।",
+
+        "dataset_error":
+            "Crop_recommendation.csv ਨਹੀਂ ਮਿਲੀ। ਕਿਰਪਾ ਕਰਕੇ ਇਸਨੂੰ crop_chatbot.py ਵਾਲੇ ਫੋਲਡਰ ਵਿੱਚ ਰੱਖੋ।",
+
+        "missing_columns":
+            "ਕ੍ਰਾਪ ਡੇਟਾਸੈੱਟ ਵਿੱਚ ਇਹ ਕਾਲਮ ਮੌਜੂਦ ਨਹੀਂ ਹਨ:",
+
+        "nitrogen_extracted":
+            "ਨਾਈਟ੍ਰੋਜਨ (N)",
+
+        "phosphorus_extracted":
+            "ਫਾਸਫੋਰਸ (P₂O₅)",
+
+        "potassium_extracted":
+            "ਪੋਟਾਸ਼ੀਅਮ (K₂O)"
     },
 
+
+    # =====================================================
+    # BENGALI
+    # =====================================================
+
     "Bengali": {
-        "title": "কৃষিবেদ",
-        "upload": "📎 KVK / মাটি স্বাস্থ্য কার্ড আপলোড করুন",
-        "upload_help": "আপনার মাটি স্বাস্থ্য কার্ডের একটি পরিষ্কার ছবি আপলোড করুন",
-        "extracted": "📄 আপনার রিপোর্ট থেকে প্রাপ্ত তথ্য",
-        "nitrogen": "নাইট্রোজেন (N)",
-        "phosphorus": "ফসফরাস (P)",
-        "potassium": "পটাশিয়াম (K)",
-        "ph": "pH",
-        "temperature": "তাপমাত্রা (°C)",
-        "humidity": "আর্দ্রতা (%)",
-        "rainfall": "বৃষ্টি (mm)",
-        "manual": "🌱 অন্যান্য তথ্য দিন",
-        "button": "ফসলের সুপারিশ করুন",
-        "crop_title": "🌾 চাষের জন্য প্রধান ফসল",
-        "not_detected": "পাওয়া যায়নি",
-        "uploaded": "আপলোড করা মাটি স্বাস্থ্য কার্ড",
-        "probability": "মডেল সম্ভাবনা",
-        "no_crop": "এই পরিস্থিতিতে কোনো ফসলের সম্ভাবনা কমপক্ষে 10% নয়।"
+
+        "title":
+            "কৃষিবেদ",
+
+        "choose_language":
+            "🌐 ভাষা নির্বাচন করুন",
+
+        "upload":
+            "📎 KVK (কৃষি বিজ্ঞান কেন্দ্র) / মাটি স্বাস্থ্য কার্ড আপলোড করুন",
+
+        "upload_help":
+            "আপনার মাটি স্বাস্থ্য কার্ডের একটি পরিষ্কার ছবি আপলোড করুন",
+
+        "reading":
+            "মাটি স্বাস্থ্য কার্ড পড়া হচ্ছে...",
+
+        "extracted":
+            "📄 আপনার রিপোর্ট থেকে প্রাপ্ত তথ্য",
+
+        "nitrogen":
+            "নাইট্রোজেন (N)",
+
+        "phosphorus":
+            "ফসফরাস (P)",
+
+        "potassium":
+            "পটাশিয়াম (K)",
+
+        "ph":
+            "pH",
+
+        "p2o5":
+            "ফসফরাস (P₂O₅)",
+
+        "k2o":
+            "পটাশিয়াম (K₂O)",
+
+        "temperature":
+            "তাপমাত্রা (°C)",
+
+        "humidity":
+            "আর্দ্রতা (%)",
+
+        "rainfall":
+            "বৃষ্টি (mm)",
+
+        "manual":
+            "🌱 অন্যান্য তথ্য দিন",
+
+        "soil_information":
+            "🌱 মাটির তথ্য",
+
+        "button":
+            "ফসলের সুপারিশ করুন",
+
+        "crop_title":
+            "🌾 চাষের জন্য প্রধান ফসল",
+
+        "not_detected":
+            "পাওয়া যায়নি",
+
+        "uploaded":
+            "আপলোড করা মাটি স্বাস্থ্য কার্ড",
+
+        "probability":
+            "মডেল সম্ভাবনা",
+
+        "no_crop":
+            "এই পরিস্থিতিতে কোনো ফসলের সম্ভাবনা কমপক্ষে 10% নয়।",
+
+        "dataset_error":
+            "Crop_recommendation.csv পাওয়া যায়নি। অনুগ্রহ করে এটি crop_chatbot.py-এর একই ফোল্ডারে রাখুন।",
+
+        "missing_columns":
+            "ক্রপ ডেটাসেটে নিম্নলিখিত কলামগুলি নেই:",
+
+        "nitrogen_extracted":
+            "নাইট্রোজেন (N)",
+
+        "phosphorus_extracted":
+            "ফসফরাস (P₂O₅)",
+
+        "potassium_extracted":
+            "পটাশিয়াম (K₂O)"
     }
 }
 
 
 # =========================================================
-# LOGO + TITLE
+# CROP TRANSLATIONS
 # =========================================================
 
-col1, col2 = st.columns([1, 3])
+crop_translations = {
 
-with col1:
-    st.image(
-        "krishived_logo.jpeg",
-        width=200
-    )
+    "rice": {
+        "en": "Rice",
+        "hi": "चावल",
+        "kn": "ಅಕ್ಕಿ",
+        "pa": "ਚੌਲ",
+        "bn": "ধান"
+    },
 
-with col2:
-    st.title("Krishived")
+    "maize": {
+        "en": "Maize",
+        "hi": "मक्का",
+        "kn": "ಮೆಕ್ಕೆಜೋಳ",
+        "pa": "ਮੱਕੀ",
+        "bn": "ভুট্টা"
+    },
+
+    "chickpea": {
+        "en": "Chickpea",
+        "hi": "चना",
+        "kn": "ಕಡಲೆ",
+        "pa": "ਛੋਲੇ",
+        "bn": "ছোলা"
+    },
+
+    "kidneybeans": {
+        "en": "Kidney Beans",
+        "hi": "राजमा",
+        "kn": "ರಾಜ್ಮಾ",
+        "pa": "ਰਾਜਮਾਂਹ",
+        "bn": "রাজমা"
+    },
+
+    "pigeonpeas": {
+        "en": "Pigeon Peas",
+        "hi": "अरहर",
+        "kn": "ತೊಗರಿ ಬೇಳೆ",
+        "pa": "ਅਰਹਰ",
+        "bn": "অড়হর"
+    },
+
+    "mothbeans": {
+        "en": "Moth Beans",
+        "hi": "मोठ",
+        "kn": "ಮೋತ್ ಬೀನ್ಸ್",
+        "pa": "ਮੋਠ",
+        "bn": "মট"
+    },
+
+    "mungbean": {
+        "en": "Mung Bean",
+        "hi": "मूंग",
+        "kn": "ಹೆಸರು ಕಾಳು",
+        "pa": "ਮੂੰਗ",
+        "bn": "মুগ ডাল"
+    },
+
+    "blackgram": {
+        "en": "Black Gram",
+        "hi": "उड़द",
+        "kn": "ಉದ್ದು",
+        "pa": "ਉੜਦ",
+        "bn": "বিউলি ডাল"
+    },
+
+    "lentil": {
+        "en": "Lentil",
+        "hi": "मसूर",
+        "kn": "ಮಸೂರ್ ಬೇಳೆ",
+        "pa": "ਮਸੂਰ",
+        "bn": "মসুর ডাল"
+    },
+
+    "pomegranate": {
+        "en": "Pomegranate",
+        "hi": "अनार",
+        "kn": "ದಾಳಿಂಬೆ",
+        "pa": "ਅਨਾਰ",
+        "bn": "ডালিম"
+    },
+
+    "banana": {
+        "en": "Banana",
+        "hi": "केला",
+        "kn": "ಬಾಳೆಹಣ್ಣು",
+        "pa": "ਕੇਲਾ",
+        "bn": "কলা"
+    },
+
+    "mango": {
+        "en": "Mango",
+        "hi": "आम",
+        "kn": "ಮಾವು",
+        "pa": "ਅੰਬ",
+        "bn": "আম"
+    },
+
+    "grapes": {
+        "en": "Grapes",
+        "hi": "अंगूर",
+        "kn": "ದ್ರಾಕ್ಷಿ",
+        "pa": "ਅੰਗੂਰ",
+        "bn": "আঙুর"
+    },
+
+    "watermelon": {
+        "en": "Watermelon",
+        "hi": "तरबूज",
+        "kn": "ಕಲ್ಲಂಗಡಿ",
+        "pa": "ਤਰਬੂਜ",
+        "bn": "তরমুজ"
+    },
+
+    "muskmelon": {
+        "en": "Muskmelon",
+        "hi": "खरबूजा",
+        "kn": "ಖರ್ಬೂಜ",
+        "pa": "ਖਰਬੂਜਾ",
+        "bn": "খরমুজ"
+    },
+
+    "apple": {
+        "en": "Apple",
+        "hi": "सेब",
+        "kn": "ಸೇಬು",
+        "pa": "ਸੇਬ",
+        "bn": "আপেল"
+    },
+
+    "orange": {
+        "en": "Orange",
+        "hi": "संतरा",
+        "kn": "ಕಿತ್ತಳೆ",
+        "pa": "ਸੰਤਰਾ",
+        "bn": "কমলা"
+    },
+
+    "papaya": {
+        "en": "Papaya",
+        "hi": "पपीता",
+        "kn": "ಪಪ್ಪಾಯಿ",
+        "pa": "ਪਪੀਤਾ",
+        "bn": "পেঁপে"
+    },
+
+    "coconut": {
+        "en": "Coconut",
+        "hi": "नारियल",
+        "kn": "ತೆಂಗಿನಕಾಯಿ",
+        "pa": "ਨਾਰੀਅਲ",
+        "bn": "নারকেল"
+    },
+
+    "cotton": {
+        "en": "Cotton",
+        "hi": "कपास",
+        "kn": "ಹತ್ತಿ",
+        "pa": "ਕਪਾਹ",
+        "bn": "তুলা"
+    },
+
+    "jute": {
+        "en": "Jute",
+        "hi": "जूट",
+        "kn": "ಸೆಣಬು",
+        "pa": "ਜੂਟ",
+        "bn": "পাট"
+    },
+
+    "coffee": {
+        "en": "Coffee",
+        "hi": "कॉफी",
+        "kn": "ಕಾಫಿ",
+        "pa": "ਕੌਫੀ",
+        "bn": "কফি"
+    }
+}
+
+
+# =========================================================
+# CROP TRANSLATION FUNCTION
+# =========================================================
+
+def translate_crop_name(crop_name, language_code):
+
+    crop_name = str(crop_name).strip().lower()
+
+    if crop_name in crop_translations:
+
+        return crop_translations[crop_name].get(
+            language_code,
+            crop_name
+        )
+
+    return crop_name
 
 
 # =========================================================
@@ -174,23 +711,25 @@ language = st.selectbox(
 
 
 # =========================================================
-# TRANSLATION FUNCTION
+# LOGO + TITLE
 # =========================================================
 
-def translate_text(text, lang):
+col1, col2 = st.columns([1, 3])
 
-    try:
 
-        return GoogleTranslator(
-            source="auto",
-            target=lang
-        ).translate(
-            str(text)
-        )
+with col1:
 
-    except Exception:
+    st.image(
+        "krishived_logo.jpeg",
+        width=200
+    )
 
-        return text
+
+with col2:
+
+    st.title(
+        labels[language]["title"]
+    )
 
 
 # =========================================================
@@ -278,9 +817,10 @@ def extract_soil_values(text):
                 if 2 <= ph_value <= 10:
 
                     values["pH"] = ph_value
+
                     break
 
-            except:
+            except Exception:
 
                 pass
 
@@ -314,9 +854,10 @@ def extract_soil_values(text):
                 if 1 <= n <= 1000:
 
                     values["N"] = n
+
                     break
 
-            except:
+            except Exception:
 
                 pass
 
@@ -350,9 +891,10 @@ def extract_soil_values(text):
                 if 0 <= p <= 500:
 
                     values["P2O5"] = p
+
                     break
 
-            except:
+            except Exception:
 
                 pass
 
@@ -386,9 +928,10 @@ def extract_soil_values(text):
                 if 0 <= k <= 1000:
 
                     values["K2O"] = k
+
                     break
 
-            except:
+            except Exception:
 
                 pass
 
@@ -448,7 +991,7 @@ if uploaded_file is not None:
     )
 
     with st.spinner(
-        "Reading Soil Health Card..."
+        labels[language]["reading"]
     ):
 
         ocr_text = perform_ocr(
@@ -461,8 +1004,11 @@ if uploaded_file is not None:
 
 
     extracted_N = soil_values["N"]
+
     extracted_P2O5 = soil_values["P2O5"]
+
     extracted_K2O = soil_values["K2O"]
+
     extracted_pH = soil_values["pH"]
 
 
@@ -504,14 +1050,14 @@ if uploaded_file is not None:
         if extracted_N is not None:
 
             st.write(
-                f"**Nitrogen (N):** "
+                f"**{labels[language]['nitrogen_extracted']}:** "
                 f"{extracted_N}"
             )
 
         else:
 
             st.write(
-                f"**Nitrogen (N):** "
+                f"**{labels[language]['nitrogen_extracted']}:** "
                 f"{labels[language]['not_detected']}"
             )
 
@@ -519,14 +1065,14 @@ if uploaded_file is not None:
         if extracted_P2O5 is not None:
 
             st.write(
-                f"**Phosphorus (P₂O₅):** "
+                f"**{labels[language]['phosphorus_extracted']}:** "
                 f"{extracted_P2O5}"
             )
 
         else:
 
             st.write(
-                f"**Phosphorus (P₂O₅):** "
+                f"**{labels[language]['phosphorus_extracted']}:** "
                 f"{labels[language]['not_detected']}"
             )
 
@@ -536,14 +1082,14 @@ if uploaded_file is not None:
         if extracted_K2O is not None:
 
             st.write(
-                f"**Potassium (K₂O):** "
+                f"**{labels[language]['potassium_extracted']}:** "
                 f"{extracted_K2O}"
             )
 
         else:
 
             st.write(
-                f"**Potassium (K₂O):** "
+                f"**{labels[language]['potassium_extracted']}:** "
                 f"{labels[language]['not_detected']}"
             )
 
@@ -551,14 +1097,14 @@ if uploaded_file is not None:
         if extracted_pH is not None:
 
             st.write(
-                f"**pH:** "
+                f"**{labels[language]['ph']}:** "
                 f"{extracted_pH}"
             )
 
         else:
 
             st.write(
-                f"**pH:** "
+                f"**{labels[language]['ph']}:** "
                 f"{labels[language]['not_detected']}"
             )
 
@@ -568,7 +1114,7 @@ if uploaded_file is not None:
 # =========================================================
 
 st.subheader(
-    "🌱 Soil Information"
+    labels[language]["soil_information"]
 )
 
 
@@ -667,8 +1213,7 @@ try:
 except FileNotFoundError:
 
     st.error(
-        "Crop_recommendation.csv was not found. "
-        "Please put it in the same folder as crop_chatbot.py."
+        labels[language]["dataset_error"]
     )
 
     st.stop()
@@ -699,7 +1244,7 @@ missing_crop_columns = [
 if missing_crop_columns:
 
     st.error(
-        f"Crop dataset is missing columns: "
+        f"{labels[language]['missing_columns']} "
         f"{missing_crop_columns}"
     )
 
@@ -744,9 +1289,10 @@ if st.button(
     type="primary"
 ):
 
+    # =====================================================
     # IMPORTANT:
-    # The order here MUST exactly match
-    # required_crop_columns.
+    # FEATURE ORDER MUST MATCH TRAINING ORDER
+    # =====================================================
 
     crop_input = pd.DataFrame(
         [[
@@ -784,10 +1330,11 @@ if st.button(
 
 
     # =====================================================
-    # FILTER: ONLY ≥10%
+    # FILTER ONLY ≥10%
     # =====================================================
 
     valid_indices = []
+
 
     for index in sorted_indices:
 
@@ -797,7 +1344,9 @@ if st.button(
 
         if probability_percent >= 10.0:
 
-            valid_indices.append(index)
+            valid_indices.append(
+                index
+            )
 
 
     # =====================================================
@@ -844,7 +1393,11 @@ if st.button(
         )
 
 
-        translated_crop = translate_text(
+        # =================================================
+        # TRANSLATE CROP NAME
+        # =================================================
+
+        translated_crop = translate_crop_name(
             crop_name,
             lang_codes[language]
         )
@@ -882,6 +1435,10 @@ if st.button(
                 f"🥉 {translated_crop}"
             )
 
+
+        # =================================================
+        # PROBABILITY
+        # =================================================
 
         st.write(
             f"{labels[language]['probability']}: "
