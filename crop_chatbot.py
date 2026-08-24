@@ -6,7 +6,7 @@ import re
 import numpy as np
 
 from PIL import Image
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from deep_translator import GoogleTranslator
 
 
@@ -54,9 +54,11 @@ labels = {
         "rainfall": "Rainfall (mm)",
         "manual": "🌱 Enter other information",
         "button": "Recommend Crops",
-        "crop_title": "🌾 Top 3 Recommended Crops",
+        "crop_title": "🌾 Top Crops to Grow",
         "not_detected": "Not detected",
-        "uploaded": "Uploaded Soil Health Card"
+        "uploaded": "Uploaded Soil Health Card",
+        "probability": "Model probability",
+        "no_crop": "No crop has a probability of at least 10% for these conditions."
     },
 
     "Hindi": {
@@ -73,9 +75,11 @@ labels = {
         "rainfall": "वर्षा (mm)",
         "manual": "🌱 अन्य जानकारी दर्ज करें",
         "button": "फसल सुझाएं",
-        "crop_title": "🌾 शीर्ष 3 सुझाई गई फसलें",
+        "crop_title": "🌾 उगाने के लिए शीर्ष फसलें",
         "not_detected": "पता नहीं चला",
-        "uploaded": "अपलोड किया गया मृदा स्वास्थ्य कार्ड"
+        "uploaded": "अपलोड किया गया मृदा स्वास्थ्य कार्ड",
+        "probability": "मॉडल संभावना",
+        "no_crop": "इन परिस्थितियों के लिए किसी भी फसल की संभावना कम से कम 10% नहीं है।"
     },
 
     "Kannada": {
@@ -92,9 +96,11 @@ labels = {
         "rainfall": "ಮಳೆ (mm)",
         "manual": "🌱 ಇತರ ಮಾಹಿತಿಯನ್ನು ನಮೂದಿಸಿ",
         "button": "ಬೆಳೆಗಳನ್ನು ಸೂಚಿಸಿ",
-        "crop_title": "🌾 ಶಿಫಾರಸು ಮಾಡಲಾದ ಟಾಪ್ 3 ಬೆಳೆಗಳು",
+        "crop_title": "🌾 ಬೆಳೆಯಲು ಸೂಕ್ತವಾದ ಪ್ರಮುಖ ಬೆಳೆಗಳು",
         "not_detected": "ಪತ್ತೆಯಾಗಿಲ್ಲ",
-        "uploaded": "ಅಪ್ಲೋಡ್ ಮಾಡಿದ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್"
+        "uploaded": "ಅಪ್ಲೋಡ್ ಮಾಡಿದ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್",
+        "probability": "ಮಾದರಿ ಸಂಭವನೀಯತೆ",
+        "no_crop": "ಈ ಪರಿಸ್ಥಿತಿಗಳಿಗೆ ಕನಿಷ್ಠ 10% ಸಂಭವನೀಯತೆಯ ಬೆಳೆ ಇಲ್ಲ."
     },
 
     "Punjabi": {
@@ -111,9 +117,11 @@ labels = {
         "rainfall": "ਵਰਖਾ (mm)",
         "manual": "🌱 ਹੋਰ ਜਾਣਕਾਰੀ ਦਰਜ ਕਰੋ",
         "button": "ਫਸਲਾਂ ਦੀ ਸਿਫਾਰਸ਼ ਕਰੋ",
-        "crop_title": "🌾 ਸਿਖਰ ਦੀਆਂ 3 ਸਿਫਾਰਸ਼ੀ ਫਸਲਾਂ",
+        "crop_title": "🌾 ਉਗਾਉਣ ਲਈ ਮੁੱਖ ਫਸਲਾਂ",
         "not_detected": "ਪਤਾ ਨਹੀਂ ਲੱਗਿਆ",
-        "uploaded": "ਅਪਲੋਡ ਕੀਤਾ ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ"
+        "uploaded": "ਅਪਲੋਡ ਕੀਤਾ ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ",
+        "probability": "ਮਾਡਲ ਸੰਭਾਵਨਾ",
+        "no_crop": "ਇਨ੍ਹਾਂ ਹਾਲਾਤਾਂ ਲਈ ਕਿਸੇ ਵੀ ਫਸਲ ਦੀ ਸੰਭਾਵਨਾ ਘੱਟੋ-ਘੱਟ 10% ਨਹੀਂ ਹੈ।"
     },
 
     "Bengali": {
@@ -130,9 +138,11 @@ labels = {
         "rainfall": "বৃষ্টি (mm)",
         "manual": "🌱 অন্যান্য তথ্য দিন",
         "button": "ফসলের সুপারিশ করুন",
-        "crop_title": "🌾 শীর্ষ ৩টি প্রস্তাবিত ফসল",
+        "crop_title": "🌾 চাষের জন্য প্রধান ফসল",
         "not_detected": "পাওয়া যায়নি",
-        "uploaded": "আপলোড করা মাটি স্বাস্থ্য কার্ড"
+        "uploaded": "আপলোড করা মাটি স্বাস্থ্য কার্ড",
+        "probability": "মডেল সম্ভাবনা",
+        "no_crop": "এই পরিস্থিতিতে কোনো ফসলের সম্ভাবনা কমপক্ষে 10% নয়।"
     }
 }
 
@@ -144,17 +154,13 @@ labels = {
 col1, col2 = st.columns([1, 3])
 
 with col1:
-
     st.image(
         "krishived_logo.jpeg",
         width=200
     )
 
 with col2:
-
-    st.title(
-        "Krishived"
-    )
+    st.title("Krishived")
 
 
 # =========================================================
@@ -701,7 +707,7 @@ if missing_crop_columns:
 
 
 # =========================================================
-# TRAIN CROP MODEL
+# TRAINING DATA
 # =========================================================
 
 X = data[
@@ -713,7 +719,12 @@ y = data[
 ]
 
 
-model = DecisionTreeClassifier(
+# =========================================================
+# RANDOM FOREST CLASSIFIER
+# =========================================================
+
+model = RandomForestClassifier(
+    n_estimators=100,
     random_state=42
 )
 
@@ -725,13 +736,17 @@ model.fit(
 
 
 # =========================================================
-# PREDICT TOP 3 CROPS
+# CROP PREDICTION
 # =========================================================
 
 if st.button(
     labels[language]["button"],
     type="primary"
 ):
+
+    # IMPORTANT:
+    # The order here MUST exactly match
+    # required_crop_columns.
 
     crop_input = pd.DataFrame(
         [[
@@ -747,6 +762,10 @@ if st.button(
     )
 
 
+    # =====================================================
+    # PREDICT PROBABILITIES
+    # =====================================================
+
     probabilities = model.predict_proba(
         crop_input
     )[0]
@@ -755,18 +774,62 @@ if st.button(
     crop_names = model.classes_
 
 
-    top_indices = np.argsort(
+    # =====================================================
+    # SORT HIGHEST → LOWEST
+    # =====================================================
+
+    sorted_indices = np.argsort(
         probabilities
     )[::-1]
 
 
-    top_indices = top_indices[:3]
+    # =====================================================
+    # FILTER: ONLY ≥10%
+    # =====================================================
 
+    valid_indices = []
+
+    for index in sorted_indices:
+
+        probability_percent = (
+            probabilities[index] * 100
+        )
+
+        if probability_percent >= 10.0:
+
+            valid_indices.append(index)
+
+
+    # =====================================================
+    # MAXIMUM 3 CROPS
+    # =====================================================
+
+    top_indices = valid_indices[:3]
+
+
+    # =====================================================
+    # HEADING
+    # =====================================================
 
     st.subheader(
         labels[language]["crop_title"]
     )
 
+
+    # =====================================================
+    # NO CROPS ≥10%
+    # =====================================================
+
+    if len(top_indices) == 0:
+
+        st.warning(
+            labels[language]["no_crop"]
+        )
+
+
+    # =====================================================
+    # DISPLAY RESULTS
+    # =====================================================
 
     for rank, index in enumerate(
         top_indices,
@@ -787,17 +850,20 @@ if st.button(
         )
 
 
+        # =================================================
+        # RANK 1
+        # =================================================
+
         if rank == 1:
 
             st.success(
                 f"🥇 {translated_crop}"
             )
 
-            st.write(
-                f"Model probability: "
-                f"{probability:.1f}%"
-            )
 
+        # =================================================
+        # RANK 2
+        # =================================================
 
         elif rank == 2:
 
@@ -805,11 +871,10 @@ if st.button(
                 f"🥈 {translated_crop}"
             )
 
-            st.write(
-                f"Model probability: "
-                f"{probability:.1f}%"
-            )
 
+        # =================================================
+        # RANK 3
+        # =================================================
 
         elif rank == 3:
 
@@ -817,7 +882,8 @@ if st.button(
                 f"🥉 {translated_crop}"
             )
 
-            st.write(
-                f"Model probability: "
-                f"{probability:.1f}%"
-            )
+
+        st.write(
+            f"{labels[language]['probability']}: "
+            f"{probability:.2f}%"
+        )
