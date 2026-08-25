@@ -6,9 +6,9 @@ import re
 import numpy as np
 
 from PIL import Image
-
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
 
 # =========================================================
@@ -42,6 +42,7 @@ lang_codes = {
 labels = {
 
     "English": {
+
         "title": "Krishived",
         "choose_language": "🌐 Choose Language",
 
@@ -57,27 +58,47 @@ labels = {
         "extracted":
             "📄 Information extracted from your report",
 
-        "nitrogen": "Nitrogen (N)",
-        "phosphorus": "Phosphorus (P)",
-        "potassium": "Potassium (K)",
-        "ph": "pH",
+        "nitrogen":
+            "Nitrogen (N)",
 
-        "temperature": "Temperature (°C)",
-        "humidity": "Humidity (%)",
-        "rainfall": "Rainfall (mm)",
+        "phosphorus":
+            "Phosphorus (P)",
 
-        "manual": "🌱 Enter other information",
-        "soil_information": "🌱 Soil Information",
+        "potassium":
+            "Potassium (K)",
 
-        "button": "Recommend Crops",
+        "ph":
+            "pH",
 
-        "crop_title": "🌾 Top Crops to Grow",
+        "temperature":
+            "Temperature (°C)",
 
-        "not_detected": "Not detected",
+        "humidity":
+            "Humidity (%)",
 
-        "uploaded": "Uploaded Soil Health Card",
+        "rainfall":
+            "Rainfall (mm)",
 
-        "probability": "Model probability",
+        "manual":
+            "🌱 Enter other information",
+
+        "soil_information":
+            "🌱 Soil Information",
+
+        "button":
+            "Recommend Crops",
+
+        "crop_title":
+            "🌾 Top Crops to Grow",
+
+        "not_detected":
+            "Not detected",
+
+        "uploaded":
+            "Uploaded Soil Health Card",
+
+        "probability":
+            "Model probability",
 
         "no_crop":
             "No crop has a probability of at least 10% for these conditions.",
@@ -88,13 +109,21 @@ labels = {
         "missing_columns":
             "Crop dataset is missing columns:",
 
-        "nitrogen_extracted": "Nitrogen (N)",
-        "phosphorus_extracted": "Phosphorus (P)",
-        "potassium_extracted": "Potassium (K)"
+        "nitrogen_extracted":
+            "Nitrogen (N)",
+
+        "phosphorus_extracted":
+            "Phosphorus (P)",
+
+        "potassium_extracted":
+            "Potassium (K)"
     },
 
+
     "Hindi": {
+
         "title": "कृषिवेद",
+
         "choose_language": "🌐 भाषा चुनें",
 
         "upload":
@@ -109,27 +138,47 @@ labels = {
         "extracted":
             "📄 आपकी रिपोर्ट से प्राप्त जानकारी",
 
-        "nitrogen": "नाइट्रोजन (N)",
-        "phosphorus": "फॉस्फोरस (P)",
-        "potassium": "पोटैशियम (K)",
-        "ph": "pH",
+        "nitrogen":
+            "नाइट्रोजन (N)",
 
-        "temperature": "तापमान (°C)",
-        "humidity": "आर्द्रता (%)",
-        "rainfall": "वर्षा (mm)",
+        "phosphorus":
+            "फॉस्फोरस (P)",
 
-        "manual": "🌱 अन्य जानकारी दर्ज करें",
-        "soil_information": "🌱 मिट्टी की जानकारी",
+        "potassium":
+            "पोटैशियम (K)",
 
-        "button": "फसल सुझाएं",
+        "ph":
+            "pH",
 
-        "crop_title": "🌾 उगाने के लिए शीर्ष फसलें",
+        "temperature":
+            "तापमान (°C)",
 
-        "not_detected": "पता नहीं चला",
+        "humidity":
+            "आर्द्रता (%)",
 
-        "uploaded": "अपलोड किया गया मृदा स्वास्थ्य कार्ड",
+        "rainfall":
+            "वर्षा (mm)",
 
-        "probability": "मॉडल संभावना",
+        "manual":
+            "🌱 अन्य जानकारी दर्ज करें",
+
+        "soil_information":
+            "🌱 मिट्टी की जानकारी",
+
+        "button":
+            "फसल सुझाएं",
+
+        "crop_title":
+            "🌾 उगाने के लिए शीर्ष फसलें",
+
+        "not_detected":
+            "पता नहीं चला",
+
+        "uploaded":
+            "अपलोड किया गया मृदा स्वास्थ्य कार्ड",
+
+        "probability":
+            "मॉडल संभावना",
 
         "no_crop":
             "इन परिस्थितियों के लिए किसी भी फसल की संभावना कम से कम 10% नहीं है।",
@@ -140,14 +189,23 @@ labels = {
         "missing_columns":
             "क्रॉप डेटासेट में निम्न कॉलम नहीं हैं:",
 
-        "nitrogen_extracted": "नाइट्रोजन (N)",
-        "phosphorus_extracted": "फॉस्फोरस (P)",
-        "potassium_extracted": "पोटैशियम (K)"
+        "nitrogen_extracted":
+            "नाइट्रोजन (N)",
+
+        "phosphorus_extracted":
+            "फॉस्फोरस (P)",
+
+        "potassium_extracted":
+            "पोटैशियम (K)"
     },
 
+
     "Kannada": {
+
         "title": "ಕೃಷಿವೇದ",
-        "choose_language": "🌐 ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+
+        "choose_language":
+            "🌐 ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
 
         "upload":
             "📎 KVK (ಕೃಷಿ ವಿಜ್ಞಾನ ಕೇಂದ್ರ) / ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ",
@@ -161,27 +219,47 @@ labels = {
         "extracted":
             "📄 ನಿಮ್ಮ ವರದಿಯಿಂದ ಪಡೆದ ಮಾಹಿತಿ",
 
-        "nitrogen": "ನೈಟ್ರಜನ (N)",
-        "phosphorus": "ಫಾಸ್ಫರಸ್ (P)",
-        "potassium": "ಪೊಟ್ಯಾಸಿಯಮ್ (K)",
-        "ph": "pH",
+        "nitrogen":
+            "ನೈಟ್ರಜನ (N)",
 
-        "temperature": "ತಾಪಮಾನ (°C)",
-        "humidity": "ಆರ್ದ್ರತೆ (%)",
-        "rainfall": "ಮಳೆ (mm)",
+        "phosphorus":
+            "ಫಾಸ್ಫರಸ್ (P)",
 
-        "manual": "🌱 ಇತರ ಮಾಹಿತಿಯನ್ನು ನಮೂದಿಸಿ",
-        "soil_information": "🌱 ಮಣ್ಣಿನ ಮಾಹಿತಿ",
+        "potassium":
+            "ಪೊಟ್ಯಾಸಿಯಮ್ (K)",
 
-        "button": "ಬೆಳೆಗಳನ್ನು ಸೂಚಿಸಿ",
+        "ph":
+            "pH",
 
-        "crop_title": "🌾 ಬೆಳೆಯಲು ಸೂಕ್ತವಾದ ಪ್ರಮುಖ ಬೆಳೆಗಳು",
+        "temperature":
+            "ತಾಪಮಾನ (°C)",
 
-        "not_detected": "ಪತ್ತೆಯಾಗಿಲ್ಲ",
+        "humidity":
+            "ಆರ್ದ್ರತೆ (%)",
 
-        "uploaded": "ಅಪ್ಲೋಡ್ ಮಾಡಿದ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್",
+        "rainfall":
+            "ಮಳೆ (mm)",
 
-        "probability": "ಮಾದರಿ ಸಂಭವನೀಯತೆ",
+        "manual":
+            "🌱 ಇತರ ಮಾಹಿತಿಯನ್ನು ನಮೂದಿಸಿ",
+
+        "soil_information":
+            "🌱 ಮಣ್ಣಿನ ಮಾಹಿತಿ",
+
+        "button":
+            "ಬೆಳೆಗಳನ್ನು ಸೂಚಿಸಿ",
+
+        "crop_title":
+            "🌾 ಬೆಳೆಯಲು ಸೂಕ್ತವಾದ ಪ್ರಮುಖ ಬೆಳೆಗಳು",
+
+        "not_detected":
+            "ಪತ್ತೆಯಾಗಿಲ್ಲ",
+
+        "uploaded":
+            "ಅಪ್ಲೋಡ್ ಮಾಡಿದ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್",
+
+        "probability":
+            "ಮಾದರಿ ಸಂಭವನೀಯತೆ",
 
         "no_crop":
             "ಈ ಪರಿಸ್ಥಿತಿಗಳಿಗೆ ಕನಿಷ್ಠ 10% ಸಂಭವನೀಯತೆಯ ಬೆಳೆ ಇಲ್ಲ.",
@@ -192,14 +270,24 @@ labels = {
         "missing_columns":
             "ಕ್ರಾಪ್ ಡೇಟಾಸೆಟ್‌ನಲ್ಲಿ ಈ ಕಾಲಮ್‌ಗಳು ಕಾಣೆಯಾಗಿವೆ:",
 
-        "nitrogen_extracted": "ನೈಟ್ರಜನ (N)",
-        "phosphorus_extracted": "ಫಾಸ್ಫರಸ್ (P)",
-        "potassium_extracted": "ಪೊಟ್ಯಾಸಿಯಮ್ (K)"
+        "nitrogen_extracted":
+            "ನೈಟ್ರಜನ (N)",
+
+        "phosphorus_extracted":
+            "ಫಾಸ್ಫರಸ್ (P)",
+
+        "potassium_extracted":
+            "ಪೊಟ್ಯಾಸಿಯಮ್ (K)"
     },
 
+
     "Punjabi": {
-        "title": "ਕ੍ਰਿਸ਼ਿਵੇਦ",
-        "choose_language": "🌐 ਭਾਸ਼ਾ ਚੁਣੋ",
+
+        "title":
+            "ਕ੍ਰਿਸ਼ਿਵੇਦ",
+
+        "choose_language":
+            "🌐 ਭਾਸ਼ਾ ਚੁਣੋ",
 
         "upload":
             "📎 KVK (ਕ੍ਰਿਸ਼ੀ ਵਿਗਿਆਨ ਕੇਂਦਰ) / ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ ਅਪਲੋਡ ਕਰੋ",
@@ -213,27 +301,47 @@ labels = {
         "extracted":
             "📄 ਤੁਹਾਡੀ ਰਿਪੋਰਟ ਤੋਂ ਪ੍ਰਾਪਤ ਜਾਣਕਾਰੀ",
 
-        "nitrogen": "ਨਾਈਟ੍ਰੋਜਨ (N)",
-        "phosphorus": "ਫਾਸਫੋਰਸ (P)",
-        "potassium": "ਪੋਟਾਸ਼ੀਅਮ (K)",
-        "ph": "pH",
+        "nitrogen":
+            "ਨਾਈਟ੍ਰੋਜਨ (N)",
 
-        "temperature": "ਤਾਪਮਾਨ (°C)",
-        "humidity": "ਨਮੀ (%)",
-        "rainfall": "ਵਰਖਾ (mm)",
+        "phosphorus":
+            "ਫਾਸਫੋਰਸ (P)",
 
-        "manual": "🌱 ਹੋਰ ਜਾਣਕਾਰੀ ਦਰਜ ਕਰੋ",
-        "soil_information": "🌱 ਮਿੱਟੀ ਦੀ ਜਾਣਕਾਰੀ",
+        "potassium":
+            "ਪੋਟਾਸ਼ੀਅਮ (K)",
 
-        "button": "ਫਸਲਾਂ ਦੀ ਸਿਫਾਰਸ਼ ਕਰੋ",
+        "ph":
+            "pH",
 
-        "crop_title": "🌾 ਉਗਾਉਣ ਲਈ ਮੁੱਖ ਫਸਲਾਂ",
+        "temperature":
+            "ਤਾਪਮਾਨ (°C)",
 
-        "not_detected": "ਪਤਾ ਨਹੀਂ ਲੱਗਿਆ",
+        "humidity":
+            "ਨਮੀ (%)",
 
-        "uploaded": "ਅਪਲੋਡ ਕੀਤਾ ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ",
+        "rainfall":
+            "ਵਰਖਾ (mm)",
 
-        "probability": "ਮਾਡਲ ਸੰਭਾਵਨਾ",
+        "manual":
+            "🌱 ਹੋਰ ਜਾਣਕਾਰੀ ਦਰਜ ਕਰੋ",
+
+        "soil_information":
+            "🌱 ਮਿੱਟੀ ਦੀ ਜਾਣਕਾਰੀ",
+
+        "button":
+            "ਫਸਲਾਂ ਦੀ ਸਿਫਾਰਸ਼ ਕਰੋ",
+
+        "crop_title":
+            "🌾 ਉਗਾਉਣ ਲਈ ਮੁੱਖ ਫਸਲਾਂ",
+
+        "not_detected":
+            "ਪਤਾ ਨਹੀਂ ਲੱਗਿਆ",
+
+        "uploaded":
+            "ਅਪਲੋਡ ਕੀਤਾ ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ",
+
+        "probability":
+            "ਮਾਡਲ ਸੰਭਾਵਨਾ",
 
         "no_crop":
             "ਇਨ੍ਹਾਂ ਹਾਲਾਤਾਂ ਲਈ ਕਿਸੇ ਵੀ ਫਸਲ ਦੀ ਸੰਭਾਵਨਾ ਘੱਟੋ-ਘੱਟ 10% ਨਹੀਂ ਹੈ।",
@@ -244,14 +352,24 @@ labels = {
         "missing_columns":
             "ਕ੍ਰਾਪ ਡੇਟਾਸੈੱਟ ਵਿੱਚ ਇਹ ਕਾਲਮ ਮੌਜੂਦ ਨਹੀਂ ਹਨ:",
 
-        "nitrogen_extracted": "ਨਾਈਟ੍ਰੋਜਨ (N)",
-        "phosphorus_extracted": "ਫਾਸਫੋਰਸ (P)",
-        "potassium_extracted": "ਪੋਟਾਸ਼ੀਅਮ (K)"
+        "nitrogen_extracted":
+            "ਨਾਈਟ੍ਰੋਜਨ (N)",
+
+        "phosphorus_extracted":
+            "ਫਾਸਫੋਰਸ (P)",
+
+        "potassium_extracted":
+            "ਪੋਟਾਸ਼ੀਅਮ (K)"
     },
 
+
     "Bengali": {
-        "title": "কৃষিবেদ",
-        "choose_language": "🌐 ভাষা নির্বাচন করুন",
+
+        "title":
+            "কৃষিবেদ",
+
+        "choose_language":
+            "🌐 ভাষা নির্বাচন করুন",
 
         "upload":
             "📎 KVK (কৃষি বিজ্ঞান কেন্দ্র) / মাটি স্বাস্থ্য কার্ড আপলোড করুন",
@@ -265,27 +383,47 @@ labels = {
         "extracted":
             "📄 আপনার রিপোর্ট থেকে প্রাপ্ত তথ্য",
 
-        "nitrogen": "নাইট্রোজেন (N)",
-        "phosphorus": "ফসফরাস (P)",
-        "potassium": "পটাশিয়াম (K)",
-        "ph": "pH",
+        "nitrogen":
+            "নাইট্রোজেন (N)",
 
-        "temperature": "তাপমাত্রা (°C)",
-        "humidity": "আর্দ্রতা (%)",
-        "rainfall": "বৃষ্টি (mm)",
+        "phosphorus":
+            "ফসফরাস (P)",
 
-        "manual": "🌱 অন্যান্য তথ্য দিন",
-        "soil_information": "🌱 মাটির তথ্য",
+        "potassium":
+            "পটাশিয়াম (K)",
 
-        "button": "ফসলের সুপারিশ করুন",
+        "ph":
+            "pH",
 
-        "crop_title": "🌾 চাষের জন্য প্রধান ফসল",
+        "temperature":
+            "তাপমাত্রা (°C)",
 
-        "not_detected": "পাওয়া যায়নি",
+        "humidity":
+            "আর্দ্রতা (%)",
 
-        "uploaded": "আপলোড করা মাটি স্বাস্থ্য কার্ড",
+        "rainfall":
+            "বৃষ্টি (mm)",
 
-        "probability": "মডেল সম্ভাবনা",
+        "manual":
+            "🌱 অন্যান্য তথ্য দিন",
+
+        "soil_information":
+            "🌱 মাটির তথ্য",
+
+        "button":
+            "ফসলের সুপারিশ করুন",
+
+        "crop_title":
+            "🌾 চাষের জন্য প্রধান ফসল",
+
+        "not_detected":
+            "পাওয়া যায়নি",
+
+        "uploaded":
+            "আপলোড করা মাটি স্বাস্থ্য কার্ড",
+
+        "probability":
+            "মডেল সম্ভাবনা",
 
         "no_crop":
             "এই পরিস্থিতিতে কোনো ফসলের সম্ভাবনা কমপক্ষে 10% নয়।",
@@ -296,9 +434,14 @@ labels = {
         "missing_columns":
             "ক্রপ ডেটাসেটে নিম্নলিখিত কলামগুলি নেই:",
 
-        "nitrogen_extracted": "নাইট্রোজেন (N)",
-        "phosphorus_extracted": "ফসফরাস (P)",
-        "potassium_extracted": "পটাশিয়াম (K)"
+        "nitrogen_extracted":
+            "নাইট্রোজেন (N)",
+
+        "phosphorus_extracted":
+            "ফসফরাস (P)",
+
+        "potassium_extracted":
+            "পটাশিয়াম (K)"
     }
 }
 
@@ -488,7 +631,7 @@ crop_translations = {
 
 
 # =========================================================
-# CROP TRANSLATION
+# CROP TRANSLATION FUNCTION
 # =========================================================
 
 def translate_crop_name(crop_name, language_code):
@@ -521,18 +664,13 @@ language = st.selectbox(
 
 col1, col2 = st.columns([1, 3])
 
+
 with col1:
 
-    try:
-
-        st.image(
-            "krishived_logo.jpeg",
-            width=200
-        )
-
-    except Exception:
-
-        st.write("🌾")
+    st.image(
+        "krishived_logo.jpeg",
+        width=200
+    )
 
 
 with col2:
@@ -543,23 +681,438 @@ with col2:
 
 
 # =========================================================
-# OCR PREPROCESSING
+# SOIL HEALTH CARD OCR
 # =========================================================
 
-def preprocess_for_ocr(image):
+def detect_green_status_centers(img):
 
-    img = np.array(image)
+    hsv = cv2.cvtColor(
+        img,
+        cv2.COLOR_RGB2HSV
+    )
 
-    if len(img.shape) == 3:
+    lower_green = np.array(
+        [35, 45, 70]
+    )
 
-        gray = cv2.cvtColor(
-            img,
-            cv2.COLOR_RGB2GRAY
+    upper_green = np.array(
+        [95, 255, 255]
+    )
+
+    mask = cv2.inRange(
+        hsv,
+        lower_green,
+        upper_green
+    )
+
+    kernel = np.ones(
+        (3, 3),
+        np.uint8
+    )
+
+    mask = cv2.morphologyEx(
+        mask,
+        cv2.MORPH_OPEN,
+        kernel
+    )
+
+    num_labels, label_image, stats, centroids = (
+        cv2.connectedComponentsWithStats(
+            mask,
+            8
+        )
+    )
+
+    centers = []
+
+    for i in range(
+        1,
+        num_labels
+    ):
+
+        x, y, w, h, area = stats[i]
+
+        if (
+            25 <= w <= 65
+            and
+            25 <= h <= 65
+            and
+            500 <= area <= 4000
+            and
+            0.75 <= (w / h) <= 1.25
+        ):
+
+            cx, cy = centroids[i]
+
+            centers.append(
+                (
+                    float(cx),
+                    float(cy)
+                )
+            )
+
+    return centers
+
+
+# =========================================================
+# CLUSTER POSITIONS
+# =========================================================
+
+def cluster_positions(
+    values,
+    tolerance=60
+):
+
+    if not values:
+
+        return []
+
+    values = sorted(
+        values
+    )
+
+    clusters = []
+
+    for value in values:
+
+        if not clusters:
+
+            clusters.append(
+                [value]
+            )
+
+            continue
+
+        current_average = np.mean(
+            clusters[-1]
+        )
+
+        if abs(
+            value - current_average
+        ) <= tolerance:
+
+            clusters[-1].append(
+                value
+            )
+
+        else:
+
+            clusters.append(
+                [value]
+            )
+
+    return [
+        float(
+            np.mean(cluster)
+        )
+        for cluster in clusters
+    ]
+
+
+# =========================================================
+# DETECT CARD GRID
+# =========================================================
+
+def detect_card_grid(img):
+
+    centers = detect_green_status_centers(
+        img
+    )
+
+    if len(centers) < 4:
+
+        return None, None
+
+    x_positions = [
+        point[0]
+        for point in centers
+    ]
+
+    y_positions = [
+        point[1]
+        for point in centers
+    ]
+
+    columns = cluster_positions(
+        x_positions,
+        tolerance=60
+    )
+
+    rows = cluster_positions(
+        y_positions,
+        tolerance=60
+    )
+
+    if len(columns) < 3:
+
+        return None, None
+
+    if len(rows) < 2:
+
+        return None, None
+
+    columns = sorted(
+        columns
+    )[:3]
+
+    rows = sorted(
+        rows
+    )[:4]
+
+    return columns, rows
+
+
+# =========================================================
+# GET NUTRIENT BOX
+# =========================================================
+
+def get_nutrient_box(
+    img,
+    columns,
+    rows,
+    column_index,
+    row_index
+):
+
+    height, width = img.shape[:2]
+
+    dx = np.median(
+        np.diff(columns)
+    )
+
+    if row_index == 0:
+
+        dy = (
+            rows[1]
+            -
+            rows[0]
+        )
+
+    elif row_index == len(rows) - 1:
+
+        dy = (
+            rows[-1]
+            -
+            rows[-2]
         )
 
     else:
 
-        gray = img
+        dy = (
+            rows[row_index + 1]
+            -
+            rows[row_index - 1]
+        ) / 2.0
+
+    cx = columns[
+        column_index
+    ]
+
+    cy = rows[
+        row_index
+    ]
+
+    x1 = int(
+        cx - 0.825 * dx
+    )
+
+    x2 = int(
+        cx + 0.17 * dx
+    )
+
+    y1 = int(
+        cy - 0.48 * dy
+    )
+
+    y2 = int(
+        cy + 0.47 * dy
+    )
+
+    x1 = max(
+        0,
+        min(
+            width - 1,
+            x1
+        )
+    )
+
+    x2 = max(
+        x1 + 1,
+        min(
+            width,
+            x2
+        )
+    )
+
+    y1 = max(
+        0,
+        min(
+            height - 1,
+            y1
+        )
+    )
+
+    y2 = max(
+        y1 + 1,
+        min(
+            height,
+            y2
+        )
+    )
+
+    return img[
+        y1:y2,
+        x1:x2
+    ]
+
+
+# =========================================================
+# NORMALIZE OCR NUMBER
+# =========================================================
+
+def normalize_ocr_number(
+    raw_number,
+    nutrient
+):
+
+    try:
+
+        value = float(
+            raw_number
+        )
+
+    except:
+
+        return None
+
+    if nutrient == "pH":
+
+        if 3.5 <= value <= 9.9:
+
+            return value
+
+        if (
+            value >= 100
+            and
+            len(
+                re.sub(
+                    r"\D",
+                    "",
+                    raw_number
+                )
+            ) == 3
+        ):
+
+            corrected = value / 100.0
+
+            if 3.5 <= corrected <= 9.9:
+
+                return corrected
+
+        return None
+
+    if nutrient == "N":
+
+        if 50 <= value <= 1000:
+
+            return value
+
+        if (
+            value.is_integer()
+            and
+            4 <= len(
+                re.sub(
+                    r"\D",
+                    "",
+                    raw_number
+                )
+            ) <= 5
+        ):
+
+            corrected = value / 100.0
+
+            if 50 <= corrected <= 1000:
+
+                return corrected
+
+        return None
+
+    if nutrient == "P":
+
+        if 0.1 <= value <= 500:
+
+            return value
+
+        if (
+            value.is_integer()
+            and
+            4 <= len(
+                re.sub(
+                    r"\D",
+                    "",
+                    raw_number
+                )
+            ) <= 5
+        ):
+
+            corrected = value / 100.0
+
+            if 0.1 <= corrected <= 500:
+
+                return corrected
+
+        return None
+
+    if nutrient == "K":
+
+        if 0.1 <= value <= 1000:
+
+            return value
+
+        if (
+            value.is_integer()
+            and
+            4 <= len(
+                re.sub(
+                    r"\D",
+                    "",
+                    raw_number
+                )
+            ) <= 5
+        ):
+
+            corrected = value / 100.0
+
+            if 0.1 <= corrected <= 1000:
+
+                return corrected
+
+        return None
+
+    return None
+
+
+# =========================================================
+# OCR A NUTRIENT BOX
+# =========================================================
+
+def ocr_nutrient_box(
+    crop,
+    nutrient
+):
+
+    if crop is None:
+
+        return None
+
+    if crop.size == 0:
+
+        return None
+
+    gray = cv2.cvtColor(
+        crop,
+        cv2.COLOR_RGB2GRAY
+    )
 
     gray = cv2.resize(
         gray,
@@ -569,22 +1122,35 @@ def preprocess_for_ocr(image):
         interpolation=cv2.INTER_CUBIC
     )
 
-    clahe = cv2.createCLAHE(
-        clipLimit=2.0,
-        tileGridSize=(8, 8)
-    )
-
-    enhanced = clahe.apply(gray)
-
-    _, otsu = cv2.threshold(
-        enhanced,
+    gray = cv2.normalize(
+        gray,
+        None,
         0,
         255,
-        cv2.THRESH_BINARY + cv2.THRESH_OTSU
+        cv2.NORM_MINMAX
+    )
+
+    processed_images = []
+
+    processed_images.append(
+        gray
+    )
+
+    _, otsu = cv2.threshold(
+        gray,
+        0,
+        255,
+        cv2.THRESH_BINARY
+        +
+        cv2.THRESH_OTSU
+    )
+
+    processed_images.append(
+        otsu
     )
 
     adaptive = cv2.adaptiveThreshold(
-        enhanced,
+        gray,
         255,
         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
         cv2.THRESH_BINARY,
@@ -592,453 +1158,97 @@ def preprocess_for_ocr(image):
         11
     )
 
-    return [
-        gray,
-        enhanced,
-        otsu,
+    processed_images.append(
         adaptive
-    ]
-
-
-# =========================================================
-# OCR
-# =========================================================
-
-def run_multiple_ocr(image):
-
-    versions = preprocess_for_ocr(image)
-
-    all_text = []
-
-    best_data = None
-    best_confidence = -1
-
-    for img in versions:
-
-        for psm in [6, 11, 12]:
-
-            text = pytesseract.image_to_string(
-                img,
-                config=f"--psm {psm}"
-            )
-
-            if text:
-
-                all_text.append(text)
-
-            data = pytesseract.image_to_data(
-                img,
-                config=f"--psm {psm}",
-                output_type=pytesseract.Output.DICT
-            )
-
-            confidences = []
-
-            for conf in data["conf"]:
-
-                try:
-
-                    conf = float(conf)
-
-                    if conf > 0:
-
-                        confidences.append(conf)
-
-                except Exception:
-
-                    pass
-
-            if confidences:
-
-                avg_confidence = np.mean(
-                    confidences
-                )
-
-                if avg_confidence > best_confidence:
-
-                    best_confidence = avg_confidence
-                    best_data = data
-
-    combined_text = "\n".join(all_text)
-
-    return combined_text, best_data
-
-
-# =========================================================
-# WORD POSITIONS
-# =========================================================
-
-def get_word_positions(ocr_data):
-
-    words = []
-
-    if ocr_data is None:
-
-        return words
-
-    count = len(
-        ocr_data["text"]
     )
-
-    # OCR images are enlarged 3x.
-    # Convert coordinates back to original image size.
-
-    OCR_SCALE = 3.0
-
-    for i in range(count):
-
-        text = str(
-            ocr_data["text"][i]
-        ).strip()
-
-        if not text:
-
-            continue
-
-        try:
-
-            confidence = float(
-                ocr_data["conf"][i]
-            )
-
-        except Exception:
-
-            confidence = 0
-
-        words.append({
-
-            "text": text,
-
-            "x": int(
-                ocr_data["left"][i] / OCR_SCALE
-            ),
-
-            "y": int(
-                ocr_data["top"][i] / OCR_SCALE
-            ),
-
-            "w": int(
-                ocr_data["width"][i] / OCR_SCALE
-            ),
-
-            "h": int(
-                ocr_data["height"][i] / OCR_SCALE
-            ),
-
-            "conf": confidence
-        })
-
-    return words
-
-
-# =========================================================
-# NUMERIC OCR WORDS
-# =========================================================
-
-def get_numeric_words(ocr_data):
-
-    numeric_words = []
-
-    words = get_word_positions(
-        ocr_data
-    )
-
-    for word in words:
-
-        text = word["text"]
-
-        fixed = (
-            text
-            .replace("O", "0")
-            .replace("o", "0")
-            .replace("I", "1")
-            .replace("l", "1")
-            .replace("|", "1")
-            .replace(",", ".")
-        )
-
-        match = re.search(
-            r'\d+(?:\.\d+)?',
-            fixed
-        )
-
-        if match:
-
-            try:
-
-                value = float(
-                    match.group()
-                )
-
-                numeric_words.append({
-
-                    "value": value,
-
-                    "x": word["x"],
-
-                    "y": word["y"],
-
-                    "w": word["w"],
-
-                    "h": word["h"],
-
-                    "text": text
-                })
-
-            except Exception:
-
-                pass
-
-    return numeric_words
-
-
-# =========================================================
-# EXTRACT N, P, K FROM FIRST ROW
-# =========================================================
-
-def extract_npk_from_first_row(
-    image,
-    ocr_data
-):
-
-    numbers = get_numeric_words(
-        ocr_data
-    )
-
-    if not numbers:
-
-        return {
-            "N": None,
-            "P": None,
-            "K": None
-        }
 
     candidates = []
 
-    for number in numbers:
+    for processed in processed_images:
 
-        raw_text = str(
-            number["text"]
-        ).strip()
-
-        fixed = (
-            raw_text
-            .replace(",", ".")
-            .replace("O", "0")
-            .replace("o", "0")
-            .replace("I", "1")
-            .replace("l", "1")
-            .replace("|", "1")
+        text = pytesseract.image_to_string(
+            processed,
+            config="--psm 6"
         )
 
-        # Soil Health Card main N/P/K values
-        # are normally written with decimal values.
-        decimal_match = re.fullmatch(
-            r'\d+\.\d{1,3}',
-            fixed
+        numbers = re.findall(
+            r"\d+(?:\.\d+)?",
+            text
         )
 
-        if not decimal_match:
+        for number in numbers:
 
-            continue
+            corrected = normalize_ocr_number(
+                number,
+                nutrient
+            )
 
-        try:
+            if corrected is not None:
 
-            value = float(fixed)
+                candidates.append(
+                    corrected
+                )
 
-        except Exception:
+        numeric_text = pytesseract.image_to_string(
+            processed,
+            config=(
+                "--psm 6 "
+                "-c tessedit_char_whitelist="
+                "0123456789."
+            )
+        )
 
-            continue
+        numeric_numbers = re.findall(
+            r"\d+(?:\.\d+)?",
+            numeric_text
+        )
 
-        if not (
-            0 <= value <= 1000
-        ):
+        for number in numeric_numbers:
 
-            continue
+            corrected = normalize_ocr_number(
+                number,
+                nutrient
+            )
 
-        candidates.append({
+            if corrected is not None:
 
-            "value": value,
-
-            "x": number["x"],
-
-            "y": number["y"],
-
-            "text": raw_text
-
-        })
+                candidates.append(
+                    corrected
+                )
 
     if not candidates:
 
-        return {
-            "N": None,
-            "P": None,
-            "K": None
-        }
-
-    # -----------------------------------------------------
-    # GROUP DECIMAL VALUES BY ROW
-    # -----------------------------------------------------
-
-    candidates.sort(
-        key=lambda item: item["y"]
-    )
-
-    rows = []
-
-    ROW_TOLERANCE = 60
-
-    for candidate in candidates:
-
-        added = False
-
-        for row in rows:
-
-            average_y = np.mean([
-                item["y"]
-                for item in row
-            ])
-
-            if abs(
-                candidate["y"] - average_y
-            ) <= ROW_TOLERANCE:
-
-                row.append(candidate)
-
-                added = True
-
-                break
-
-        if not added:
-
-            rows.append(
-                [candidate]
-            )
-
-    # -----------------------------------------------------
-    # FIND FIRST ROW WITH AT LEAST 3 VALUES
-    # -----------------------------------------------------
-
-    valid_rows = [
-
-        row
-
-        for row in rows
-
-        if len(row) >= 3
-
-    ]
-
-    if valid_rows:
-
-        # The first valid 3-value row is the N/P/K row.
-
-        npk_row = sorted(
-            valid_rows,
-            key=lambda row: min(
-                item["y"]
-                for item in row
-            )
-        )[0]
-
-        # Left → Right:
-        # Nitrogen → Phosphorus → Potassium
-
-        npk_row = sorted(
-            npk_row,
-            key=lambda item: item["x"]
-        )
-
-        return {
-
-            "N": npk_row[0]["value"],
-
-            "P": npk_row[1]["value"],
-
-            "K": npk_row[2]["value"]
-
-        }
-
-    # -----------------------------------------------------
-    # FALLBACK
-    # -----------------------------------------------------
-
-    # If OCR only detects two or fewer decimal values,
-    # do not shift values between nutrients.
-
-    return {
-        "N": None,
-        "P": None,
-        "K": None
-    }
-
-
-# =========================================================
-# pH DETECTION
-# =========================================================
-
-def detect_ph_from_text(text):
-
-    if not text:
-
         return None
 
-    patterns = [
-
-        r'p\s*H\s*[:\-]?\s*(\d+(?:\.\d+)?)',
-
-        r'ph\s*[:\-]?\s*(\d+(?:\.\d+)?)',
-
-        r'PH\s*[:\-]?\s*(\d+(?:\.\d+)?)'
-
+    rounded_candidates = [
+        round(
+            value,
+            2
+        )
+        for value in candidates
     ]
 
-    for pattern in patterns:
+    counts = {}
 
-        matches = re.findall(
-            pattern,
-            text,
-            flags=re.IGNORECASE
+    for value in rounded_candidates:
+
+        counts[value] = (
+            counts.get(
+                value,
+                0
+            )
+            +
+            1
         )
 
-        for match in matches:
-
-            try:
-
-                value = float(match)
-
-                if 3.5 <= value <= 9.9:
-
-                    return value
-
-            except Exception:
-
-                pass
-
-    # -----------------------------------------------------
-    # FALLBACK
-    # -----------------------------------------------------
-
-    candidates = re.findall(
-        r'\b\d+\.\d+\b',
-        text
+    best_value = max(
+        counts,
+        key=counts.get
     )
 
-    for candidate in candidates:
-
-        try:
-
-            value = float(candidate)
-
-            if 3.5 <= value <= 9.9:
-
-                return value
-
-        except Exception:
-
-            pass
-
-    return None
+    return float(
+        best_value
+    )
 
 
 # =========================================================
@@ -1047,59 +1257,149 @@ def detect_ph_from_text(text):
 
 def extract_soil_values(image):
 
-    values = {
+    img = np.array(
+        image
+    )
 
+    values = {
         "N": None,
         "P": None,
         "K": None,
         "pH": None
-
     }
 
-    # -----------------------------------------------------
-    # OCR
-    # -----------------------------------------------------
-
-    text, ocr_data = run_multiple_ocr(
-        image
+    columns, rows = detect_card_grid(
+        img
     )
 
-    # -----------------------------------------------------
-    # pH
-    # -----------------------------------------------------
+    if (
+        columns is not None
+        and
+        rows is not None
+        and
+        len(columns) >= 3
+        and
+        len(rows) >= 2
+    ):
 
-    values["pH"] = detect_ph_from_text(
-        text
-    )
+        nitrogen_crop = get_nutrient_box(
+            img,
+            columns,
+            rows,
+            0,
+            0
+        )
 
-    # -----------------------------------------------------
-    # N, P, K
-    # -----------------------------------------------------
+        values["N"] = ocr_nutrient_box(
+            nitrogen_crop,
+            "N"
+        )
 
-    npk_values = extract_npk_from_first_row(
-        image,
-        ocr_data
-    )
+        phosphorus_crop = get_nutrient_box(
+            img,
+            columns,
+            rows,
+            1,
+            0
+        )
 
-    values["N"] = npk_values["N"]
-    values["P"] = npk_values["P"]
-    values["K"] = npk_values["K"]
+        values["P"] = ocr_nutrient_box(
+            phosphorus_crop,
+            "P"
+        )
+
+        potassium_crop = get_nutrient_box(
+            img,
+            columns,
+            rows,
+            2,
+            0
+        )
+
+        values["K"] = ocr_nutrient_box(
+            potassium_crop,
+            "K"
+        )
+
+        ph_crop = get_nutrient_box(
+            img,
+            columns,
+            rows,
+            0,
+            1
+        )
+
+        values["pH"] = ocr_nutrient_box(
+            ph_crop,
+            "pH"
+        )
+
+    else:
+
+        height, width = img.shape[:2]
+
+        nitrogen_crop = img[
+            int(height * 0.07):
+            int(height * 0.25),
+            int(width * 0.02):
+            int(width * 0.38)
+        ]
+
+        values["N"] = ocr_nutrient_box(
+            nitrogen_crop,
+            "N"
+        )
+
+        phosphorus_crop = img[
+            int(height * 0.07):
+            int(height * 0.25),
+            int(width * 0.37):
+            int(width * 0.66)
+        ]
+
+        values["P"] = ocr_nutrient_box(
+            phosphorus_crop,
+            "P"
+        )
+
+        potassium_crop = img[
+            int(height * 0.07):
+            int(height * 0.25),
+            int(width * 0.64):
+            int(width * 0.96)
+        ]
+
+        values["K"] = ocr_nutrient_box(
+            potassium_crop,
+            "K"
+        )
+
+        ph_crop = img[
+            int(height * 0.22):
+            int(height * 0.42),
+            int(width * 0.02):
+            int(width * 0.38)
+        ]
+
+        values["pH"] = ocr_nutrient_box(
+            ph_crop,
+            "pH"
+        )
 
     return values
 
 
 # =========================================================
-# UPLOAD
+# UPLOAD SOIL HEALTH CARD
 # =========================================================
 
 st.subheader(
     labels[language]["upload"]
 )
 
+
 uploaded_file = st.file_uploader(
-
     labels[language]["upload_help"],
-
     type=[
         "jpg",
         "jpeg",
@@ -1119,7 +1419,7 @@ extracted_pH = None
 
 
 # =========================================================
-# PROCESS IMAGE
+# PROCESS UPLOADED REPORT
 # =========================================================
 
 if uploaded_file is not None:
@@ -1128,23 +1428,11 @@ if uploaded_file is not None:
         uploaded_file
     ).convert("RGB")
 
-    # -----------------------------------------------------
-    # SHOW IMAGE
-    # -----------------------------------------------------
-
     st.image(
-
         image,
-
         caption=labels[language]["uploaded"],
-
         use_container_width=True
-
     )
-
-    # -----------------------------------------------------
-    # OCR
-    # -----------------------------------------------------
 
     with st.spinner(
         labels[language]["reading"]
@@ -1154,18 +1442,10 @@ if uploaded_file is not None:
             image
         )
 
-    # -----------------------------------------------------
-    # VALUES
-    # -----------------------------------------------------
-
     extracted_N = soil_values["N"]
     extracted_P = soil_values["P"]
     extracted_K = soil_values["K"]
     extracted_pH = soil_values["pH"]
-
-    # -----------------------------------------------------
-    # DISPLAY EXTRACTED
-    # -----------------------------------------------------
 
     st.subheader(
         labels[language]["extracted"]
@@ -1178,37 +1458,29 @@ if uploaded_file is not None:
         if extracted_N is not None:
 
             st.write(
-
                 f"**{labels[language]['nitrogen_extracted']}:** "
                 f"{extracted_N:.2f} kg/ha"
-
             )
 
         else:
 
             st.write(
-
                 f"**{labels[language]['nitrogen_extracted']}:** "
                 f"{labels[language]['not_detected']}"
-
             )
 
         if extracted_P is not None:
 
             st.write(
-
                 f"**{labels[language]['phosphorus_extracted']}:** "
                 f"{extracted_P:.2f} kg/ha"
-
             )
 
         else:
 
             st.write(
-
                 f"**{labels[language]['phosphorus_extracted']}:** "
                 f"{labels[language]['not_detected']}"
-
             )
 
     with col2:
@@ -1216,37 +1488,29 @@ if uploaded_file is not None:
         if extracted_K is not None:
 
             st.write(
-
                 f"**{labels[language]['potassium_extracted']}:** "
                 f"{extracted_K:.2f} kg/ha"
-
             )
 
         else:
 
             st.write(
-
                 f"**{labels[language]['potassium_extracted']}:** "
                 f"{labels[language]['not_detected']}"
-
             )
 
         if extracted_pH is not None:
 
             st.write(
-
                 f"**{labels[language]['ph']}:** "
                 f"{extracted_pH:.2f}"
-
             )
 
         else:
 
             st.write(
-
                 f"**{labels[language]['ph']}:** "
                 f"{labels[language]['not_detected']}"
-
             )
 
 
@@ -1260,83 +1524,50 @@ st.subheader(
 
 
 # =========================================================
-# N
+# NITROGEN
 # =========================================================
 
 N = st.number_input(
-
     labels[language]["nitrogen"],
-
     min_value=0.0,
-
     max_value=1000.0,
-
     value=(
-
         float(extracted_N)
-
         if extracted_N is not None
-
         else 90.0
-
-    ),
-
-    step=1.0
-
+    )
 )
 
 
 # =========================================================
-# P
+# PHOSPHORUS
 # =========================================================
 
 P = st.number_input(
-
     labels[language]["phosphorus"],
-
     min_value=0.0,
-
     max_value=500.0,
-
     value=(
-
         float(extracted_P)
-
         if extracted_P is not None
-
         else 40.0
-
-    ),
-
-    step=1.0
-
+    )
 )
 
 
 # =========================================================
-# K
+# POTASSIUM
 # =========================================================
 
 K = st.number_input(
-
     labels[language]["potassium"],
-
     min_value=0.0,
-
     max_value=1000.0,
-
     value=(
-
         float(extracted_K)
-
         if extracted_K is not None
-
         else 40.0
-
-    ),
-
-    step=1.0
-
+    )
 )
 
 
@@ -1345,30 +1576,19 @@ K = st.number_input(
 # =========================================================
 
 ph = st.number_input(
-
     labels[language]["ph"],
-
     min_value=0.0,
-
     max_value=14.0,
-
     value=(
-
         float(extracted_pH)
-
         if extracted_pH is not None
-
         else 6.5
-
-    ),
-
-    step=0.1
-
+    )
 )
 
 
 # =========================================================
-# OTHER INFORMATION
+# OTHER FARMER INPUTS
 # =========================================================
 
 st.subheader(
@@ -1377,52 +1597,31 @@ st.subheader(
 
 
 temperature = st.number_input(
-
     labels[language]["temperature"],
-
     min_value=0.0,
-
     max_value=50.0,
-
-    value=25.0,
-
-    step=0.1
-
+    value=25.0
 )
 
 
 humidity = st.number_input(
-
     labels[language]["humidity"],
-
     min_value=0.0,
-
     max_value=100.0,
-
-    value=80.0,
-
-    step=1.0
-
+    value=80.0
 )
 
 
 rainfall = st.number_input(
-
     labels[language]["rainfall"],
-
     min_value=0.0,
-
     max_value=5000.0,
-
-    value=200.0,
-
-    step=1.0
-
+    value=200.0
 )
 
 
 # =========================================================
-# LOAD DATASET
+# LOAD CROP DATASET
 # =========================================================
 
 try:
@@ -1442,24 +1641,10 @@ except FileNotFoundError:
 
 
 # =========================================================
-# CLEAN COLUMN NAMES
-# =========================================================
-
-data.columns = (
-
-    data.columns
-    .astype(str)
-    .str.strip()
-
-)
-
-
-# =========================================================
 # REQUIRED COLUMNS
 # =========================================================
 
 required_crop_columns = [
-
     "N",
     "P",
     "K",
@@ -1467,35 +1652,28 @@ required_crop_columns = [
     "humidity",
     "ph",
     "rainfall"
-
 ]
 
 
 missing_crop_columns = [
-
     column
-
     for column in required_crop_columns
-
     if column not in data.columns
-
 ]
 
 
 if missing_crop_columns:
 
     st.error(
-
         f"{labels[language]['missing_columns']} "
         f"{missing_crop_columns}"
-
     )
 
     st.stop()
 
 
 # =========================================================
-# LABEL COLUMN
+# CHECK LABEL COLUMN
 # =========================================================
 
 if "label" not in data.columns:
@@ -1508,24 +1686,7 @@ if "label" not in data.columns:
 
 
 # =========================================================
-# NUMERIC CONVERSION
-# =========================================================
-
-for column in required_crop_columns:
-
-    data[column] = pd.to_numeric(
-        data[column],
-        errors="coerce"
-    )
-
-
-data = data.dropna(
-    subset=required_crop_columns + ["label"]
-)
-
-
-# =========================================================
-# X AND Y
+# TRAINING DATA
 # =========================================================
 
 X = data[
@@ -1542,16 +1703,11 @@ y = data[
 # =========================================================
 
 X_train, X_test, y_train, y_test = train_test_split(
-
     X,
     y,
-
-    test_size=0.30,
-
+    test_size=0.20,
     random_state=42,
-
     stratify=y
-
 )
 
 
@@ -1560,13 +1716,14 @@ X_train, X_test, y_train, y_test = train_test_split(
 # =========================================================
 
 model = RandomForestClassifier(
-
     n_estimators=100,
-
     random_state=42
-
 )
 
+
+# =========================================================
+# TRAIN MODEL ONLY ON TRAINING DATA
+# =========================================================
 
 model.fit(
     X_train,
@@ -1575,82 +1732,93 @@ model.fit(
 
 
 # =========================================================
+# TEST MODEL
+# =========================================================
+
+y_test_pred = model.predict(
+    X_test
+)
+
+
+test_accuracy = accuracy_score(
+    y_test,
+    y_test_pred
+)
+
+
+# =========================================================
 # CROP PREDICTION
 # =========================================================
 
 if st.button(
-
     labels[language]["button"],
-
     type="primary"
-
 ):
 
-    # -----------------------------------------------------
-    # NITROGEN CALIBRATION
-    # -----------------------------------------------------
+    # =====================================================
+    # NITROGEN CONVERSION
+    #
+    # Displayed:
+    # N = 528
+    #
+    # Model:
+    # N = 528 × 0.30
+    #
+    # Only model input is changed.
+    # =====================================================
 
     N_for_model = N * 0.30
 
-    # -----------------------------------------------------
-    # MODEL INPUT
-    # -----------------------------------------------------
+
+    # =====================================================
+    # CREATE MODEL INPUT
+    # =====================================================
 
     crop_input = pd.DataFrame(
-
         [[
-
             N_for_model,
-
             P,
-
             K,
-
             temperature,
-
             humidity,
-
             ph,
-
             rainfall
-
         ]],
-
         columns=required_crop_columns
-
     )
 
-    # -----------------------------------------------------
+
+    # =====================================================
     # PREDICT PROBABILITIES
-    # -----------------------------------------------------
+    # =====================================================
 
     probabilities = model.predict_proba(
         crop_input
     )[0]
 
+
     crop_names = model.classes_
 
-    # -----------------------------------------------------
-    # SORT PROBABILITIES
-    # -----------------------------------------------------
+
+    # =====================================================
+    # SORT HIGHEST → LOWEST
+    # =====================================================
 
     sorted_indices = np.argsort(
         probabilities
     )[::-1]
 
-    # -----------------------------------------------------
-    # CROPS >= 10%
-    # -----------------------------------------------------
+
+    # =====================================================
+    # FILTER ONLY ≥10%
+    # =====================================================
 
     valid_indices = []
 
     for index in sorted_indices:
 
         probability_percent = (
-
-            probabilities[index]
-            * 100
-
+            probabilities[index] * 100
         )
 
         if probability_percent >= 10.0:
@@ -1659,23 +1827,26 @@ if st.button(
                 index
             )
 
-    # -----------------------------------------------------
-    # TOP 3
-    # -----------------------------------------------------
+
+    # =====================================================
+    # MAXIMUM 3 CROPS
+    # =====================================================
 
     top_indices = valid_indices[:3]
 
-    # -----------------------------------------------------
-    # RESULTS HEADING
-    # -----------------------------------------------------
+
+    # =====================================================
+    # HEADING
+    # =====================================================
 
     st.subheader(
         labels[language]["crop_title"]
     )
 
-    # -----------------------------------------------------
-    # NO RESULTS
-    # -----------------------------------------------------
+
+    # =====================================================
+    # NO CROPS ≥10%
+    # =====================================================
 
     if len(top_indices) == 0:
 
@@ -1683,9 +1854,10 @@ if st.button(
             labels[language]["no_crop"]
         )
 
-    # -----------------------------------------------------
+
+    # =====================================================
     # DISPLAY RESULTS
-    # -----------------------------------------------------
+    # =====================================================
 
     for rank, index in enumerate(
         top_indices,
@@ -1695,19 +1867,23 @@ if st.button(
         crop_name = crop_names[index]
 
         probability = (
-
-            probabilities[index]
-            * 100
-
+            probabilities[index] * 100
         )
+
+
+        # =================================================
+        # TRANSLATE CROP NAME
+        # =================================================
 
         translated_crop = translate_crop_name(
-
             crop_name,
-
             lang_codes[language]
-
         )
+
+
+        # =================================================
+        # RANK 1
+        # =================================================
 
         if rank == 1:
 
@@ -1715,11 +1891,21 @@ if st.button(
                 f"🥇 {translated_crop}"
             )
 
+
+        # =================================================
+        # RANK 2
+        # =================================================
+
         elif rank == 2:
 
             st.info(
                 f"🥈 {translated_crop}"
             )
+
+
+        # =================================================
+        # RANK 3
+        # =================================================
 
         elif rank == 3:
 
@@ -1727,9 +1913,12 @@ if st.button(
                 f"🥉 {translated_crop}"
             )
 
-        st.write(
 
+        # =================================================
+        # PROBABILITY
+        # =================================================
+
+        st.write(
             f"{labels[language]['probability']}: "
             f"{probability:.2f}%"
-
         )
