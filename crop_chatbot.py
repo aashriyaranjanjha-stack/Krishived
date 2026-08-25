@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import streamlit as st
 import pytesseract
@@ -6,9 +7,15 @@ import re
 import numpy as np
 
 from PIL import Image
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score
+)
 
 
 # =========================================================
@@ -123,7 +130,6 @@ labels = {
     "Hindi": {
 
         "title": "कृषिवेद",
-
         "choose_language": "🌐 भाषा चुनें",
 
         "upload":
@@ -283,8 +289,7 @@ labels = {
 
     "Punjabi": {
 
-        "title":
-            "ਕ੍ਰਿਸ਼ਿਵੇਦ",
+        "title": "ਕ੍ਰਿਸ਼ਿਵੇਦ",
 
         "choose_language":
             "🌐 ਭਾਸ਼ਾ ਚੁਣੋ",
@@ -365,8 +370,7 @@ labels = {
 
     "Bengali": {
 
-        "title":
-            "কৃষিবেদ",
+        "title": "কৃষিবেদ",
 
         "choose_language":
             "🌐 ভাষা নির্বাচন করুন",
@@ -631,16 +635,20 @@ crop_translations = {
 
 
 # =========================================================
-# CROP TRANSLATION FUNCTION
+# CROP TRANSLATION
 # =========================================================
 
 def translate_crop_name(crop_name, language_code):
 
-    crop_name = str(crop_name).strip().lower()
+    crop_name = str(
+        crop_name
+    ).strip().lower()
 
     if crop_name in crop_translations:
 
-        return crop_translations[crop_name].get(
+        return crop_translations[
+            crop_name
+        ].get(
             language_code,
             crop_name
         )
@@ -662,15 +670,21 @@ language = st.selectbox(
 # LOGO + TITLE
 # =========================================================
 
-col1, col2 = st.columns([1, 3])
+col1, col2 = st.columns(
+    [1, 3]
+)
 
 
 with col1:
 
-    st.image(
-        "krishived_logo.jpeg",
-        width=200
-    )
+    if os.path.exists(
+        "krishived_logo.jpeg"
+    ):
+
+        st.image(
+            "krishived_logo.jpeg",
+            width=200
+        )
 
 
 with col2:
@@ -764,7 +778,6 @@ def cluster_positions(
 ):
 
     if not values:
-
         return []
 
     values = sorted(
@@ -904,13 +917,8 @@ def get_nutrient_box(
             rows[row_index - 1]
         ) / 2.0
 
-    cx = columns[
-        column_index
-    ]
-
-    cy = rows[
-        row_index
-    ]
+    cx = columns[column_index]
+    cy = rows[row_index]
 
     x1 = int(
         cx - 0.825 * dx
@@ -975,15 +983,67 @@ def normalize_ocr_number(
     nutrient
 ):
 
+    raw_number = str(
+        raw_number
+    ).strip()
+
+    raw_number = raw_number.replace(
+        ",",
+        "."
+    )
+
+    raw_number = raw_number.replace(
+        "O",
+        "0"
+    )
+
+    raw_number = raw_number.replace(
+        "o",
+        "0"
+    )
+
+    raw_number = raw_number.replace(
+        "I",
+        "1"
+    )
+
+    raw_number = raw_number.replace(
+        "l",
+        "1"
+    )
+
+    raw_number = raw_number.replace(
+        "|",
+        "1"
+    )
+
+    match = re.search(
+        r"\d+(?:\.\d+)?",
+        raw_number
+    )
+
+    if not match:
+
+        return None
+
+    numeric_string = match.group(
+        0
+    )
+
     try:
 
         value = float(
-            raw_number
+            numeric_string
         )
 
-    except:
+    except ValueError:
 
         return None
+
+
+    # =====================================================
+    # pH
+    # =====================================================
 
     if nutrient == "pH":
 
@@ -994,16 +1054,12 @@ def normalize_ocr_number(
         if (
             value >= 100
             and
-            len(
-                re.sub(
-                    r"\D",
-                    "",
-                    raw_number
-                )
-            ) == 3
+            "." not in numeric_string
+            and
+            len(numeric_string) == 3
         ):
 
-            corrected = value / 100.0
+            corrected = value / 100
 
             if 3.5 <= corrected <= 9.9:
 
@@ -1011,31 +1067,35 @@ def normalize_ocr_number(
 
         return None
 
+
+    # =====================================================
+    # NITROGEN
+    # =====================================================
+
     if nutrient == "N":
 
-        if 50 <= value <= 1000:
+        if 20 <= value <= 1000:
 
             return value
 
         if (
-            value.is_integer()
+            value >= 10000
             and
-            4 <= len(
-                re.sub(
-                    r"\D",
-                    "",
-                    raw_number
-                )
-            ) <= 5
+            "." not in numeric_string
         ):
 
-            corrected = value / 100.0
+            corrected = value / 100
 
-            if 50 <= corrected <= 1000:
+            if 20 <= corrected <= 1000:
 
                 return corrected
 
         return None
+
+
+    # =====================================================
+    # PHOSPHORUS
+    # =====================================================
 
     if nutrient == "P":
 
@@ -1044,24 +1104,23 @@ def normalize_ocr_number(
             return value
 
         if (
-            value.is_integer()
+            "." not in numeric_string
             and
-            4 <= len(
-                re.sub(
-                    r"\D",
-                    "",
-                    raw_number
-                )
-            ) <= 5
+            len(numeric_string) == 3
         ):
 
-            corrected = value / 100.0
+            corrected = value / 10
 
             if 0.1 <= corrected <= 500:
 
                 return corrected
 
         return None
+
+
+    # =====================================================
+    # POTASSIUM
+    # =====================================================
 
     if nutrient == "K":
 
@@ -1070,18 +1129,12 @@ def normalize_ocr_number(
             return value
 
         if (
-            value.is_integer()
+            "." not in numeric_string
             and
-            4 <= len(
-                re.sub(
-                    r"\D",
-                    "",
-                    raw_number
-                )
-            ) <= 5
+            len(numeric_string) == 4
         ):
 
-            corrected = value / 100.0
+            corrected = value / 100
 
             if 0.1 <= corrected <= 1000:
 
@@ -1089,11 +1142,12 @@ def normalize_ocr_number(
 
         return None
 
+
     return None
 
 
 # =========================================================
-# OCR A NUTRIENT BOX
+# OCR ONE NUTRIENT BOX
 # =========================================================
 
 def ocr_nutrient_box(
@@ -1117,8 +1171,8 @@ def ocr_nutrient_box(
     gray = cv2.resize(
         gray,
         None,
-        fx=3,
-        fy=3,
+        fx=4,
+        fy=4,
         interpolation=cv2.INTER_CUBIC
     )
 
@@ -1171,6 +1225,16 @@ def ocr_nutrient_box(
             config="--psm 6"
         )
 
+        text = (
+            text
+            .replace(",", ".")
+            .replace("O", "0")
+            .replace("o", "0")
+            .replace("I", "1")
+            .replace("l", "1")
+            .replace("|", "1")
+        )
+
         numbers = re.findall(
             r"\d+(?:\.\d+)?",
             text
@@ -1189,13 +1253,19 @@ def ocr_nutrient_box(
                     corrected
                 )
 
+
         numeric_text = pytesseract.image_to_string(
             processed,
             config=(
                 "--psm 6 "
                 "-c tessedit_char_whitelist="
-                "0123456789."
+                "0123456789.,"
             )
+        )
+
+        numeric_text = numeric_text.replace(
+            ",",
+            "."
         )
 
         numeric_numbers = re.findall(
@@ -1216,9 +1286,11 @@ def ocr_nutrient_box(
                     corrected
                 )
 
+
     if not candidates:
 
         return None
+
 
     rounded_candidates = [
         round(
@@ -1240,6 +1312,7 @@ def ocr_nutrient_box(
             +
             1
         )
+
 
     best_value = max(
         counts,
@@ -1268,9 +1341,19 @@ def extract_soil_values(image):
         "pH": None
     }
 
+
+    # =====================================================
+    # FIND CARD GRID
+    # =====================================================
+
     columns, rows = detect_card_grid(
         img
     )
+
+
+    # =====================================================
+    # PRIMARY METHOD
+    # =====================================================
 
     if (
         columns is not None
@@ -1281,6 +1364,10 @@ def extract_soil_values(image):
         and
         len(rows) >= 2
     ):
+
+        # -------------------------------------------------
+        # NITROGEN
+        # -------------------------------------------------
 
         nitrogen_crop = get_nutrient_box(
             img,
@@ -1295,6 +1382,11 @@ def extract_soil_values(image):
             "N"
         )
 
+
+        # -------------------------------------------------
+        # PHOSPHORUS
+        # -------------------------------------------------
+
         phosphorus_crop = get_nutrient_box(
             img,
             columns,
@@ -1307,6 +1399,11 @@ def extract_soil_values(image):
             phosphorus_crop,
             "P"
         )
+
+
+        # -------------------------------------------------
+        # POTASSIUM
+        # -------------------------------------------------
 
         potassium_crop = get_nutrient_box(
             img,
@@ -1321,6 +1418,11 @@ def extract_soil_values(image):
             "K"
         )
 
+
+        # -------------------------------------------------
+        # pH
+        # -------------------------------------------------
+
         ph_crop = get_nutrient_box(
             img,
             columns,
@@ -1334,13 +1436,24 @@ def extract_soil_values(image):
             "pH"
         )
 
+
+    # =====================================================
+    # FALLBACK METHOD
+    # =====================================================
+
     else:
 
         height, width = img.shape[:2]
 
+
+        # -------------------------------------------------
+        # NITROGEN
+        # -------------------------------------------------
+
         nitrogen_crop = img[
             int(height * 0.07):
             int(height * 0.25),
+
             int(width * 0.02):
             int(width * 0.38)
         ]
@@ -1350,9 +1463,15 @@ def extract_soil_values(image):
             "N"
         )
 
+
+        # -------------------------------------------------
+        # PHOSPHORUS
+        # -------------------------------------------------
+
         phosphorus_crop = img[
             int(height * 0.07):
             int(height * 0.25),
+
             int(width * 0.37):
             int(width * 0.66)
         ]
@@ -1362,9 +1481,15 @@ def extract_soil_values(image):
             "P"
         )
 
+
+        # -------------------------------------------------
+        # POTASSIUM
+        # -------------------------------------------------
+
         potassium_crop = img[
             int(height * 0.07):
             int(height * 0.25),
+
             int(width * 0.64):
             int(width * 0.96)
         ]
@@ -1374,9 +1499,15 @@ def extract_soil_values(image):
             "K"
         )
 
+
+        # -------------------------------------------------
+        # pH
+        # -------------------------------------------------
+
         ph_crop = img[
             int(height * 0.22):
             int(height * 0.42),
+
             int(width * 0.02):
             int(width * 0.38)
         ]
@@ -1385,6 +1516,7 @@ def extract_soil_values(image):
             ph_crop,
             "pH"
         )
+
 
     return values
 
@@ -1409,7 +1541,7 @@ uploaded_file = st.file_uploader(
 
 
 # =========================================================
-# DEFAULT VALUES
+# DEFAULT EXTRACTED VALUES
 # =========================================================
 
 extracted_N = None
@@ -1428,11 +1560,13 @@ if uploaded_file is not None:
         uploaded_file
     ).convert("RGB")
 
+
     st.image(
         image,
         caption=labels[language]["uploaded"],
         use_container_width=True
     )
+
 
     with st.spinner(
         labels[language]["reading"]
@@ -1442,16 +1576,25 @@ if uploaded_file is not None:
             image
         )
 
+
     extracted_N = soil_values["N"]
     extracted_P = soil_values["P"]
     extracted_K = soil_values["K"]
     extracted_pH = soil_values["pH"]
 
+
+    # =====================================================
+    # SHOW OCR VALUES
+    # =====================================================
+
     st.subheader(
         labels[language]["extracted"]
     )
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns(
+        2
+    )
+
 
     with col1:
 
@@ -1469,6 +1612,7 @@ if uploaded_file is not None:
                 f"{labels[language]['not_detected']}"
             )
 
+
         if extracted_P is not None:
 
             st.write(
@@ -1482,6 +1626,7 @@ if uploaded_file is not None:
                 f"**{labels[language]['phosphorus_extracted']}:** "
                 f"{labels[language]['not_detected']}"
             )
+
 
     with col2:
 
@@ -1498,6 +1643,7 @@ if uploaded_file is not None:
                 f"**{labels[language]['potassium_extracted']}:** "
                 f"{labels[language]['not_detected']}"
             )
+
 
         if extracted_pH is not None:
 
@@ -1588,7 +1734,7 @@ ph = st.number_input(
 
 
 # =========================================================
-# OTHER FARMER INPUTS
+# OTHER INFORMATION
 # =========================================================
 
 st.subheader(
@@ -1641,7 +1787,7 @@ except FileNotFoundError:
 
 
 # =========================================================
-# REQUIRED COLUMNS
+# REQUIRED CROP COLUMNS
 # =========================================================
 
 required_crop_columns = [
@@ -1672,10 +1818,6 @@ if missing_crop_columns:
     st.stop()
 
 
-# =========================================================
-# CHECK LABEL COLUMN
-# =========================================================
-
 if "label" not in data.columns:
 
     st.error(
@@ -1686,7 +1828,24 @@ if "label" not in data.columns:
 
 
 # =========================================================
-# TRAINING DATA
+# CLEAN CROP DATA
+# =========================================================
+
+for column in required_crop_columns:
+
+    data[column] = pd.to_numeric(
+        data[column],
+        errors="coerce"
+    )
+
+
+data = data.dropna(
+    subset=required_crop_columns + ["label"]
+)
+
+
+# =========================================================
+# CROP FEATURES
 # =========================================================
 
 X = data[
@@ -1699,7 +1858,7 @@ y = data[
 
 
 # =========================================================
-# TRAIN / TEST SPLIT
+# EXACT 80/20 TRAIN-TEST SPLIT
 # =========================================================
 
 X_train, X_test, y_train, y_test = train_test_split(
@@ -1712,17 +1871,18 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 
 # =========================================================
-# RANDOM FOREST
+# RANDOM FOREST CROP MODEL
 # =========================================================
 
 model = RandomForestClassifier(
     n_estimators=100,
-    random_state=42
+    random_state=42,
+    n_jobs=-1
 )
 
 
 # =========================================================
-# TRAIN MODEL ONLY ON TRAINING DATA
+# TRAIN ONLY ON 80%
 # =========================================================
 
 model.fit(
@@ -1732,18 +1892,100 @@ model.fit(
 
 
 # =========================================================
-# TEST MODEL
+# TEST ON 20%
 # =========================================================
 
-y_test_pred = model.predict(
+y_test_prediction = model.predict(
     X_test
 )
 
 
-test_accuracy = accuracy_score(
+# =========================================================
+# MODEL METRICS
+# =========================================================
+
+accuracy = accuracy_score(
     y_test,
-    y_test_pred
+    y_test_prediction
 )
+
+precision = precision_score(
+    y_test,
+    y_test_prediction,
+    average="weighted",
+    zero_division=0
+)
+
+recall = recall_score(
+    y_test,
+    y_test_prediction,
+    average="weighted",
+    zero_division=0
+)
+
+f1 = f1_score(
+    y_test,
+    y_test_prediction,
+    average="weighted",
+    zero_division=0
+)
+
+
+# =========================================================
+# MODEL PERFORMANCE
+# =========================================================
+
+with st.expander(
+    "📊 Model Performance"
+):
+
+    st.caption(
+        "Evaluation performed using an 80/20 train-test split."
+    )
+
+    metric1, metric2 = st.columns(
+        2
+    )
+
+    metric3, metric4 = st.columns(
+        2
+    )
+
+    with metric1:
+
+        st.metric(
+            "Accuracy",
+            f"{accuracy * 100:.2f}%"
+        )
+
+    with metric2:
+
+        st.metric(
+            "Precision",
+            f"{precision * 100:.2f}%"
+        )
+
+    with metric3:
+
+        st.metric(
+            "Recall",
+            f"{recall * 100:.2f}%"
+        )
+
+    with metric4:
+
+        st.metric(
+            "F1 Score",
+            f"{f1 * 100:.2f}%"
+        )
+
+    st.write(
+        f"Training samples: **{len(X_train)}**"
+    )
+
+    st.write(
+        f"Testing samples: **{len(X_test)}**"
+    )
 
 
 # =========================================================
@@ -1756,22 +1998,14 @@ if st.button(
 ):
 
     # =====================================================
-    # NITROGEN CONVERSION
-    #
-    # Displayed:
-    # N = 528
-    #
-    # Model:
-    # N = 528 × 0.30
-    #
-    # Only model input is changed.
+    # NITROGEN MODEL CONVERSION
     # =====================================================
 
     N_for_model = N * 0.30
 
 
     # =====================================================
-    # CREATE MODEL INPUT
+    # MODEL INPUT
     # =====================================================
 
     crop_input = pd.DataFrame(
@@ -1789,19 +2023,18 @@ if st.button(
 
 
     # =====================================================
-    # PREDICT PROBABILITIES
+    # PROBABILITIES
     # =====================================================
 
     probabilities = model.predict_proba(
         crop_input
     )[0]
 
-
     crop_names = model.classes_
 
 
     # =====================================================
-    # SORT HIGHEST → LOWEST
+    # SORT
     # =====================================================
 
     sorted_indices = np.argsort(
@@ -1810,7 +2043,7 @@ if st.button(
 
 
     # =====================================================
-    # FILTER ONLY ≥10%
+    # ONLY CROPS >= 10%
     # =====================================================
 
     valid_indices = []
@@ -1818,25 +2051,23 @@ if st.button(
     for index in sorted_indices:
 
         probability_percent = (
-            probabilities[index] * 100
+            probabilities[index]
+            *
+            100
         )
 
-        if probability_percent >= 10.0:
+        if probability_percent >= 10:
 
             valid_indices.append(
                 index
             )
 
 
-    # =====================================================
-    # MAXIMUM 3 CROPS
-    # =====================================================
-
     top_indices = valid_indices[:3]
 
 
     # =====================================================
-    # HEADING
+    # TITLE
     # =====================================================
 
     st.subheader(
@@ -1845,7 +2076,7 @@ if st.button(
 
 
     # =====================================================
-    # NO CROPS ≥10%
+    # NO RESULTS
     # =====================================================
 
     if len(top_indices) == 0:
@@ -1856,7 +2087,7 @@ if st.button(
 
 
     # =====================================================
-    # DISPLAY RESULTS
+    # DISPLAY CROPS
     # =====================================================
 
     for rank, index in enumerate(
@@ -1867,13 +2098,10 @@ if st.button(
         crop_name = crop_names[index]
 
         probability = (
-            probabilities[index] * 100
+            probabilities[index]
+            *
+            100
         )
-
-
-        # =================================================
-        # TRANSLATE CROP NAME
-        # =================================================
 
         translated_crop = translate_crop_name(
             crop_name,
@@ -1881,20 +2109,11 @@ if st.button(
         )
 
 
-        # =================================================
-        # RANK 1
-        # =================================================
-
         if rank == 1:
 
             st.success(
                 f"🥇 {translated_crop}"
             )
-
-
-        # =================================================
-        # RANK 2
-        # =================================================
 
         elif rank == 2:
 
@@ -1902,21 +2121,12 @@ if st.button(
                 f"🥈 {translated_crop}"
             )
 
-
-        # =================================================
-        # RANK 3
-        # =================================================
-
         elif rank == 3:
 
             st.warning(
                 f"🥉 {translated_crop}"
             )
 
-
-        # =================================================
-        # PROBABILITY
-        # =================================================
 
         st.write(
             f"{labels[language]['probability']}: "
